@@ -243,6 +243,7 @@ function spawnRow( group, rowX, rowY )
 	local group = group
 	local initX = rowX
 	local rowY = rowY
+
 	for i = 1, 5 do
 		local typeSelector = math.random( 1, 2 )	--random selectors for spawming
 		local objectSelector = math.random( 1, 10 )
@@ -274,6 +275,9 @@ local function respawn( group )
 	local elem_amount = group.numChildren
 	print( elem_amount)
 
+	for i = 1, elem_amount do
+		group:remove( i )
+	end
 	for i = 1, elem_amount do
 		group:remove( i )
 	end
@@ -359,6 +363,7 @@ function scene:create( event )
 	spawnRow( categoriesGroup, 35, 185 )
 	spawnRow( categoriesGroup, 35, 260 )
 
+	print( selectedBasket["name"] )
 	local basket = display.newImageRect( mainGroup, selectedBasket["src"], 200, 100 )
 	basket.name = selectedBasket["name"]
 	basket.x = 475
