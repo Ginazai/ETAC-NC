@@ -14,12 +14,12 @@ local background
 local backButton
 local ball
 local box
-local selectedBasket = {}
 --variables for control
 local score = 0
 local scoreText
 local isSet = false
 local timeSpend = 0
+local selectedBasket = {}
 --load sheets
 local fSheet = 
 {	--Food sheet frames
@@ -183,17 +183,17 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 	local category = boxName --get variable 1 locally (not doing this causes the function not to recognize the variables)
 	local name = typeName --get variable 2 locally (not doing this causes the function not to recognize the variables)
 	if ( phase == "began" )then
-		if ( (objt1.name == category and objt2.name == name) or    --set variables based in the objects 
-		(objt2.name == category and objt1.name == name) ) then
+		if(objt1.name == category and objt2.name == name)then
+			display.remove( objt2 )
+			score = score + 1
+			print( score )
+		elseif(objt2.name == category and objt1.name == name)then
 			display.remove( objt1 )
 			score = score + 1
 			print( score )
 		end
 	end
 	if( phase == "ended" )then 								--check the objects colliding when the collision ends
-		if ( (objt1.name ~= category and objt2.name ~= name) or 
-		(objt2.name ~= category and objt1.name ~= name) ) then
-		end
 	end
 end
 --Handlers for all collision types
@@ -273,11 +273,6 @@ local function spawnRow( group, rowX, rowY )
 		frame:addEventListener( "touch", dragItem )
 		initX = initX + 60
 	end		
-	local basket = display.newImageRect( group, selectedBasket["src"], 200, 100 )
-	basket.name = selectedBasket["name"]
-	basket.x = 475
-	basket.y = 260
-	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
 end
 local function respawn( group )
 	local group = group
@@ -288,9 +283,18 @@ local function respawn( group )
 			group:remove( i )
 		end
 	end
-	spawnRow( group, 35, 110 )
-	spawnRow( group, 35, 185 )
-	spawnRow( group, 35, 260 )
+
+	timer.performWithDelay( 1000, spawnRow( group, 35, 110 ) )
+	timer.performWithDelay( 1000, spawnRow( group, 35, 185 ) )
+	timer.performWithDelay( 1000, spawnRow( group, 35, 260 ) )
+
+	local basket = display.newImageRect( group, selectedBasket["src"], 200, 100 )
+	basket.name = selectedBasket["name"]
+	basket.x = 475
+	basket.y = 260
+	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
+
+	--print( json.prettify( selectedBasket ) )
 end
 -----------------------------------------
 -- Coding playground
@@ -369,14 +373,19 @@ function scene:create( event )
 	print( selectedBasket["name"] )
 	print( selectedBasket["name"] )
 
+	local basket = display.newImageRect( categoriesGroup, selectedBasket["src"], 200, 100 )
+	basket.name = selectedBasket["name"]
+	basket.x = 475
+	basket.y = 260
+	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
+
 	local respawnButton = display.newImageRect( backGroup, "Assets/Buttons/respawn.png", 50, 25 )
 	respawnButton.x = 475
 	respawnButton.y = 50
 
+	respawnButton:addEventListener( "tap", respawnRow )
 	Runtime:addEventListener( "collision", collisionWithin )
 	backButton:addEventListener( "tap", gotoPlayMenu )
-
-	respawnButton:addEventListener( "tap", respawnRow )
 end
 --show()
 function scene:show( event )
