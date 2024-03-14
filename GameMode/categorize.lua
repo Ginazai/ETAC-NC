@@ -238,7 +238,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 	return true -- Prevents touch propagation to underlying objects
 end
 --spawn handler
-function spawnRow( group, rowX, rowY )
+local function spawnRow( group, rowX, rowY )
 	local options = { foodSheet, animalSheet }
 	local group = group
 	local initX = rowX
@@ -250,45 +250,43 @@ function spawnRow( group, rowX, rowY )
 		--categorizing the objects 
 		local frame = display.newImageRect( group, options[typeSelector], objectSelector, 50, 50 )
 		if(options[typeSelector] == foodSheet)then		--Assigning names to each element within
-			frame.name = "food"						--the loop for categorizing them		
-			selectedBasket = {
-				name = "foodBasket",
-				src = "Assets/Food/food-basket.png"
-			}
+			frame.name = "food"						--the loop for categorizing them
+			if not( selectedBasket["name"] )then
+				selectedBasket = {
+					name = "foodBasket",
+					src = "Assets/Food/food-basket.png"
+				}
+			end		
 		elseif(options[typeSelector] == animalSheet)then
 			frame.name = "animal"
-			selectedBasket = {
-				name = "animalBasket",
-				src = "Assets/Animals/animals-basket.png"
-			}			
+			if not( selectedBasket["name"] )then
+				selectedBasket = {
+					name = "animalBasket",
+					src = "Assets/Animals/animals-basket.png"
+				}
+			end	
 		end
 		frame.x = initX 
 		frame.y = rowY
 		frame.isBullet = true
 		physics.addBody( frame, "dynamic", { radius=50, isSensor=true } )
-		initX = initX + 60
 		frame:addEventListener( "touch", dragItem )
-	end
+		initX = initX + 60
+	end		
+	local basket = display.newImageRect( group, selectedBasket["src"], 200, 100 )
+	basket.name = selectedBasket["name"]
+	basket.x = 475
+	basket.y = 260
+	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
 end
 local function respawn( group )
 	local group = group
 	local elem_amount = group.numChildren
-	print( elem_amount)
 
 	for i = 1, elem_amount do
-		group:remove( i )
-	end
-	for i = 1, elem_amount do
-		group:remove( i )
-	end
-	for i = 1, elem_amount do
-		group:remove( i )
-	end
-	for i = 1, elem_amount do
-		group:remove( i )
-	end
-	for i = 1, elem_amount do
-		group:remove( i )
+		for i = 1, elem_amount do
+			group:remove( i )
+		end
 	end
 	spawnRow( group, 35, 110 )
 	spawnRow( group, 35, 185 )
@@ -347,13 +345,14 @@ function scene:create( event )
 	backButton.x = 0
 	backButton.y = 16
 
-	local secondBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 515, 325 )
-	secondBoard.x = 160
-	secondBoard.y = 200
 	--for trying spreadsheet crop
 	-- local testImage = display.newImageRect( mainGroup, animalSheet, 10, 50, 50 ) 
 	-- testImage.x = display.contentCenterX
 	-- testImage.y = display.contentCenterY
+
+	local secondBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 515, 325 )
+	secondBoard.x = 160
+	secondBoard.y = 200
 
 	local basketBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 250, 150 )
 	basketBoard.x = 475
@@ -363,28 +362,21 @@ function scene:create( event )
 	spawnRow( categoriesGroup, 35, 185 )
 	spawnRow( categoriesGroup, 35, 260 )
 
+	local function respawnRow( event )
+		respawn( categoriesGroup )
+	end
+
 	print( selectedBasket["name"] )
-	local basket = display.newImageRect( mainGroup, selectedBasket["src"], 200, 100 )
-	basket.name = selectedBasket["name"]
-	basket.x = 475
-	basket.y = 260
-	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
+	print( selectedBasket["name"] )
 
 	local respawnButton = display.newImageRect( backGroup, "Assets/Buttons/respawn.png", 50, 25 )
 	respawnButton.x = 475
 	respawnButton.y = 50
 
-	local function respawnGroup( event )
-		respawn( categoriesGroup )
-	end
-
 	Runtime:addEventListener( "collision", collisionWithin )
 	backButton:addEventListener( "tap", gotoPlayMenu )
 
-	respawnButton:addEventListener( "tap", respawnGroup )
-
-	print( categoriesGroup.numChildren )
-	print( json.prettify( categoriesGroup ) )
+	respawnButton:addEventListener( "tap", respawnRow )
 end
 --show()
 function scene:show( event )
