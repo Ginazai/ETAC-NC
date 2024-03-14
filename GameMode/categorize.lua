@@ -269,8 +269,27 @@ function spawnRow( group, rowX, rowY )
 		frame:addEventListener( "touch", dragItem )
 	end
 end
--- local randomTrial = math.random( 1, #basketOptions )
--- print( basketOptions[randomTrial] )
+local function respawn( group )
+	local group = group
+	local elem_amount = group.numChildren
+	print( elem_amount)
+
+	for i = 1, elem_amount do
+		group:remove( i )
+	end
+	for i = 1, elem_amount do
+		group:remove( i )
+	end
+	for i = 1, elem_amount do
+		group:remove( i )
+	end
+	for i = 1, elem_amount do
+		group:remove( i )
+	end
+	spawnRow( group, 35, 110 )
+	spawnRow( group, 35, 185 )
+	spawnRow( group, 35, 260 )
+end
 -----------------------------------------
 -- Coding playground
 -----------------------------------------
@@ -290,6 +309,10 @@ function scene:create( event )
 	sceneGroup:insert( backGroup ) 
 	local mainGroup = display.newGroup() -- game objects group
 	sceneGroup:insert( mainGroup ) 
+
+	local categoriesGroup = display.newGroup() --for spawm objects
+	sceneGroup:insert( categoriesGroup )
+
 	local uiGroup = display.newGroup() 	-- UI elements group
 	sceneGroup:insert( uiGroup ) 
 
@@ -332,9 +355,9 @@ function scene:create( event )
 	basketBoard.x = 475
 	basketBoard.y = 260
 
-	spawnRow( mainGroup, 35, 110 )
-	spawnRow( mainGroup, 35, 185 )
-	spawnRow( mainGroup, 35, 260 )
+	spawnRow( categoriesGroup, 35, 110 )
+	spawnRow( categoriesGroup, 35, 185 )
+	spawnRow( categoriesGroup, 35, 260 )
 
 	local basket = display.newImageRect( mainGroup, selectedBasket["src"], 200, 100 )
 	basket.name = selectedBasket["name"]
@@ -342,8 +365,21 @@ function scene:create( event )
 	basket.y = 260
 	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
 
+	local respawnButton = display.newImageRect( backGroup, "Assets/Buttons/respawn.png", 50, 25 )
+	respawnButton.x = 475
+	respawnButton.y = 50
+
+	local function respawnGroup( event )
+		respawn( categoriesGroup )
+	end
+
 	Runtime:addEventListener( "collision", collisionWithin )
 	backButton:addEventListener( "tap", gotoPlayMenu )
+
+	respawnButton:addEventListener( "tap", respawnGroup )
+
+	print( categoriesGroup.numChildren )
+	print( json.prettify( categoriesGroup ) )
 end
 --show()
 function scene:show( event )
