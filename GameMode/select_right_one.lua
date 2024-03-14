@@ -25,7 +25,6 @@ end
 -- Scene
 -----------------------------------------
 function scene:create( event )
-
 	local sceneGroup = self.view
 
 	createGraphicElement( sceneGroup, background, 700, 375, "Assets/Background/select_right_one.png", display.contentCenterX, display.contentCenterY - 25 )
@@ -35,7 +34,17 @@ function scene:create( event )
 	backButton.y = 16
 
 	backButton:addEventListener( "tap", gotoPlayMenu )
+end
+function scene:hide( event )
+	local sceneGoup = self.view
+	local phase = event.phase
 
+	if( phase == "will")then
+	elseif( phase == "did" )then
+		backButton:removeEventListener( "tap", gotoPlayMenu )
+		composer.removeScene( "GameMode.select_right_one" ) 
+	end
 end
 scene:addEventListener( "create", scene )
+scene:addEventListener( "hide", scene )
 return scene

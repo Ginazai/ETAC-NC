@@ -4,11 +4,17 @@
 --system.activate( "multitouch" ) --(not needed)
 local composer = require( "composer" )
 local scene = composer.newScene()
+local json = require( "json" )
+--DB resources
+local sqlite = require( "sqlite3" )
+local path = system.pathForFile( "data.db", system.DocumentsDirectory ) --path for DB
+local db = sqlite.open( path ) 											--opening DB 
 --initializing variables
 local background
 local backButton
 local ball
 local box
+local selectedBasket = {}
 --variables for control
 local score = 0
 local scoreText
@@ -62,7 +68,7 @@ local fSheet =
 			height = 293
 		},
 		{ --frame 8
-			x = 2049,
+			x = 2051,
 			y = 0,
 			width = 292,
 			height = 293
@@ -176,24 +182,24 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 
 	local category = boxName --get variable 1 locally (not doing this causes the function not to recognize the variables)
 	local name = typeName --get variable 2 locally (not doing this causes the function not to recognize the variables)
-
 	if ( phase == "began" )then
 		if ( (objt1.name == category and objt2.name == name) or    --set variables based in the objects 
 		(objt2.name == category and objt1.name == name) ) then
-			--scoreText.text = "set"
-			display.remove( objt2 )
+			display.remove( objt1 )
+			score = score + 1
+			print( score )
 		end
 	end
 	if( phase == "ended" )then 								--check the objects colliding when the collision ends
 		if ( (objt1.name ~= category and objt2.name ~= name) or 
 		(objt2.name ~= category and objt1.name ~= name) ) then
-			--scoreText.text = "not set"
 		end
 	end
 end
 --Handlers for all collision types
 local function collisionWithin( event )
-	collisionOcurred( event, "food", "foodBox" )
+	collisionOcurred( event, "animal", "animalBasket" )
+	collisionOcurred( event, "food", "foodBasket" )
 end
 -- Activate multitouch (not currently needed)
 local function dragItem( event ) --drag: touch detector + collision detector
@@ -229,7 +235,6 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
-	Runtime:addEventListener( "collision", collisionWithin )
 	return true -- Prevents touch propagation to underlying objects
 end
 --spawn handler
@@ -244,35 +249,33 @@ function spawnRow( group, rowX, rowY )
 		--categorizing the objects 
 		local frame = display.newImageRect( group, options[typeSelector], objectSelector, 50, 50 )
 		if(options[typeSelector] == foodSheet)then		--Assigning names to each element within
-			frame.name = "food"						--the loop for categorizing them						
+			frame.name = "food"						--the loop for categorizing them		
+			selectedBasket = {
+				name = "foodBasket",
+				src = "Assets/Food/food-basket.png"
+			}
 		elseif(options[typeSelector] == animalSheet)then
 			frame.name = "animal"
+			selectedBasket = {
+				name = "animalBasket",
+				src = "Assets/Animals/animals-basket.png"
+			}			
 		end
 		frame.x = initX 
 		frame.y = rowY
+		frame.isBullet = true
 		physics.addBody( frame, "dynamic", { radius=50, isSensor=true } )
 		initX = initX + 60
 		frame:addEventListener( "touch", dragItem )
 	end
 end
+-- local randomTrial = math.random( 1, #basketOptions )
+-- print( basketOptions[randomTrial] )
 -----------------------------------------
 -- Coding playground
 -----------------------------------------
 local backgroundSet = { "Assets/Background/kinder.png", "Assets/Background/kitchen.png", "Assets/Background/jungle.png",
 "Assets/Background/living.png", "Assets/Background/bedroom.png", } --random background list for random selection
---DB implementation
-local sqlite = require( "sqlite3" )
-local path = system.pathForFile( "data.db", system.DocumentsDirectory ) --path for DB
-local db = sqlite.open( path ) 											--opening DB 
-local testing = [[ DROP TABLE IF EXISTS scores;]] --WARNING!! Disable on production. Will drop the table on scene refresh
-local createTable = [[
-CREATE TABLE IF NOT EXISTS scores (
-id INTEGER PRIMARY KEY, 
-score INTEGER NOT NULL,
-time_spend TEXT NOT NULL);
-]] --query
-db:exec( testing ) 		--DISABLE!!
-db:exec( createTable )	--executing table creation query
 -----------------------------------------
 -- Scene Handling
 -----------------------------------------
@@ -289,14 +292,16 @@ function scene:create( event )
 	sceneGroup:insert( mainGroup ) 
 	local uiGroup = display.newGroup() 	-- UI elements group
 	sceneGroup:insert( uiGroup ) 
+
+
 	local selectedBg = math.random( 1,5 )
-	background = display.newImageRect( backGroup, backgroundSet[selectedBg], 700, 425 ) --background
+	background = display.newImageRect( backGroup, backgroundSet[selectedBg], 700, 375 ) --background
 	--applying blur to background
 	background.fill.effect = 'filter.blurGaussian'
-	background.fill.effect.horizontal.blurSize = 20
-	background.fill.effect.horizontal.sigma = 175
-	background.fill.effect.vertical.blurSize = 20
-	background.fill.effect.vertical.sigma = 175
+	background.fill.effect.horizontal.blurSize = 10
+	background.fill.effect.horizontal.sigma = 150
+	background.fill.effect.vertical.blurSize = 10
+	background.fill.effect.vertical.sigma = 150
 	
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
@@ -304,12 +309,12 @@ function scene:create( event )
 	scoreText = display.newText( uiGroup, "", display.contentCenterX, 20, native.systemFont, 15 )
 	scoreText:setFillColor( 0,0,0 )	
 	--Box
-	box = display.newImageRect( mainGroup, "Assets/Toys/box.png", 90, 90 ) --toys box
-	box.name = "foodBox"
-	local box_outline = graphics.newOutline( 10, "Assets/Toys/box.png" )
-	box.x = 500
-	box.y = 265
-	physics.addBody( box, "static", { radius=1, outline=box_outline } ) --box physics box
+	-- box = display.newImageRect( mainGroup, "Assets/Toys/box.png", 90, 90 ) --toys box
+	-- box.name = "foodBox"
+	-- local box_outline = graphics.newOutline( 10, "Assets/Toys/box.png" )
+	-- box.x = 500
+	-- box.y = 265
+	-- physics.addBody( box, "static", { radius=1, outline=box_outline } ) --box physics box
 	--Back Button
 	backButton = display.newImageRect( backGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
 	backButton.x = 0
@@ -323,11 +328,40 @@ function scene:create( event )
 	-- testImage.x = display.contentCenterX
 	-- testImage.y = display.contentCenterY
 
+	local basketBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 250, 150 )
+	basketBoard.x = 475
+	basketBoard.y = 260
+
 	spawnRow( mainGroup, 35, 110 )
 	spawnRow( mainGroup, 35, 185 )
 	spawnRow( mainGroup, 35, 260 )
 
+	local basket = display.newImageRect( mainGroup, selectedBasket["src"], 200, 100 )
+	basket.name = selectedBasket["name"]
+	basket.x = 475
+	basket.y = 260
+	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
+
+	Runtime:addEventListener( "collision", collisionWithin )
 	backButton:addEventListener( "tap", gotoPlayMenu )
+end
+--show()
+function scene:show( event )
+	local phase = event.phase
+
+	if(phase == "will")then
+		--DB implementation
+		local testing = [[ DROP TABLE IF EXISTS scores;]] --WARNING!! Disable on production. Will drop the table on scene refresh
+		local createTable = [[
+		CREATE TABLE IF NOT EXISTS scores (
+		id INTEGER PRIMARY KEY, 
+		score INTEGER NOT NULL,
+		time_spend TEXT NOT NULL);
+		]] --query
+		db:exec( testing ) 		--DISABLE!!
+		db:exec( createTable )	--executing table creation query
+	elseif(phase == "did")then
+	end
 end
 --hide()
 function scene:hide( event )
@@ -338,19 +372,23 @@ function scene:hide( event )
 		timer.cancel( currentTime ) --stop time counter
 	elseif (phase == "did") then
 		--inserting into DB 
-		local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[" );]]
-		db:exec( insertToDb )
-		for row in db:nrows("SELECT * FROM scores") do -- testing DB output
-		    print( "row id: "..row.id )
-		    print( "score: "..row.score )
-		    print( "total time: "..row.time_spend )
+		if( saveTime ~= nil )then
+			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[" );]]
+			db:exec( insertToDb )
+			for row in db:nrows("SELECT * FROM scores") do -- testing DB output
+			    print( "row id: "..row.id )
+			    print( "score: "..row.score )
+			    print( "total time: "..row.time_spend )
+			end
 		end
 		db:close() --close DB
 		physics.stop() -- stopping physics when scene stops
 		Runtime:removeEventListener( "tap", gotoPlayMenu ) 	--Go Back button listener
+		Runtime:removeEventListener( "collision", collisionWithin ) -- Remove collision event listener
 		composer.removeScene( "GameMode.categorize" )		--Remove scene when scene goes away
 	end
 end
 scene:addEventListener( "create", scene ) --Create scene listener
-scene:addEventListener( "hide", scene )	--hide scene listener
+scene:addEventListener( "show", scene ) --Show scene listener
+scene:addEventListener( "hide", scene )	--Hide scene listener
 return scene
