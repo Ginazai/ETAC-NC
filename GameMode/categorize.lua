@@ -165,6 +165,12 @@ animalSheet = graphics.newImageSheet( "Assets/Animals/animals-sheet.png", ASheet
 local function gotoPlayMenu() --go back to previous screen
 	composer.gotoScene( "Scenes.play_menu", { time=500, effect="slideRight" } )
 end
+local pauseOptions = {
+    isModal = true
+}
+local function pauseMenu()
+	composer.showOverlay( "Scenes.pause_menu", pauseOptions )
+end
 --timer
 local function timeCounter( event )
 	timeSpend = timeSpend + 1
@@ -186,7 +192,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		if(objt1.name == category and objt2.name == name)then
 			display.remove( objt2 )
 			score = score + 1
-			print( score )
+			--print( score )
 		elseif(objt2.name == category and objt1.name == name)then
 			display.remove( objt1 )
 			score = score + 1
@@ -306,6 +312,7 @@ local backgroundSet = { "Assets/Background/kinder.png", "Assets/Background/kitch
 -----------------------------------------
 --create()
 function scene:create( event )
+	composer.hideOverlay()
 	currentTime = timer.performWithDelay( 1000, timeCounter, timeSpend )
 	local sceneGroup = self.view 		--scene view
 	local physics = require( "physics" ) --implementing physics
@@ -337,15 +344,8 @@ function scene:create( event )
 	--Score Text
 	scoreText = display.newText( uiGroup, "", display.contentCenterX, 20, native.systemFont, 15 )
 	scoreText:setFillColor( 0,0,0 )	
-	--Box
-	-- box = display.newImageRect( mainGroup, "Assets/Toys/box.png", 90, 90 ) --toys box
-	-- box.name = "foodBox"
-	-- local box_outline = graphics.newOutline( 10, "Assets/Toys/box.png" )
-	-- box.x = 500
-	-- box.y = 265
-	-- physics.addBody( box, "static", { radius=1, outline=box_outline } ) --box physics box
 	--Back Button
-	backButton = display.newImageRect( backGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
+	backButton = display.newImageRect( uiGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
 	backButton.x = 0
 	backButton.y = 16
 
@@ -370,20 +370,22 @@ function scene:create( event )
 		respawn( categoriesGroup )
 	end
 
-	print( selectedBasket["name"] )
-	print( selectedBasket["name"] )
-
 	local basket = display.newImageRect( categoriesGroup, selectedBasket["src"], 200, 100 )
 	basket.name = selectedBasket["name"]
 	basket.x = 475
 	basket.y = 260
 	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
 
-	local respawnButton = display.newImageRect( backGroup, "Assets/Buttons/respawn.png", 50, 25 )
-	respawnButton.x = 475
-	respawnButton.y = 50
+	-- local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
+	-- respawnButton.x = 545
+	-- respawnButton.y = 50
 
-	respawnButton:addEventListener( "tap", respawnRow )
+	local pauseButton = display.newImageRect( uiGroup, "Assets/Buttons/pause.png", 50, 25 )
+	pauseButton.x = 545
+	pauseButton.y = 16
+
+	pauseButton:addEventListener( "tap", pauseMenu )
+	-- respawnButton:addEventListener( "tap", respawnRow )
 	Runtime:addEventListener( "collision", collisionWithin )
 	backButton:addEventListener( "tap", gotoPlayMenu )
 end
