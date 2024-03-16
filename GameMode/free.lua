@@ -169,7 +169,7 @@ local pauseOptions = {
     isModal = true
 }
 local function pauseMenu()
-	composer.showOverlay( "Scenes.pause_menu", pauseOptions )
+	composer.showOverlay( "Scenes.Overlay.pause_menu", pauseOptions )
 end
 --timer
 local function timeCounter( event )
@@ -378,16 +378,11 @@ function scene:create( event )
 
 	local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
 	respawnButton.x = 545
-	respawnButton.y = 50
+	respawnButton.y = 16
 
-	local pauseButton = display.newImageRect( uiGroup, "Assets/Buttons/pause.png", 50, 25 )
-	pauseButton.x = 545
-	pauseButton.y = 16
-
-	pauseButton:addEventListener( "tap", pauseMenu )
+	backButton:addEventListener( "tap", pauseMenu )
 	respawnButton:addEventListener( "tap", respawnRow )
 	Runtime:addEventListener( "collision", collisionWithin )
-	backButton:addEventListener( "tap", gotoPlayMenu )
 end
 --show()
 function scene:show( event )
@@ -429,7 +424,7 @@ function scene:hide( event )
 		physics.stop() -- stopping physics when scene stops
 		Runtime:removeEventListener( "tap", gotoPlayMenu ) 	--Go Back button listener
 		Runtime:removeEventListener( "collision", collisionWithin ) -- Remove collision event listener
-		composer.removeScene( "GameMode.categorize" )		--Remove scene when scene goes away
+		composer.removeScene( "GameMode.free" )		--Remove scene when scene goes away
 	end
 end
 scene:addEventListener( "create", scene ) --Create scene listener

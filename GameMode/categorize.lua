@@ -11,6 +11,7 @@ local path = system.pathForFile( "data.db", system.DocumentsDirectory ) --path f
 local db = sqlite.open( path ) 											--opening DB 
 --initializing variables
 local background
+local selectedBackground
 local backButton
 local ball
 local box
@@ -165,11 +166,18 @@ animalSheet = graphics.newImageSheet( "Assets/Animals/animals-sheet.png", ASheet
 local function gotoPlayMenu() --go back to previous screen
 	composer.gotoScene( "Scenes.play_menu", { time=500, effect="slideRight" } )
 end
-local pauseOptions = {
-    isModal = true
+--pause menu handler
+local modalOptions = {
+    isModal = true,
+    params = {}
 }
 local function pauseMenu()
-	composer.showOverlay( "Scenes.pause_menu", pauseOptions )
+	composer.showOverlay( "Scenes.Overlay.pause_menu", modalOptions )
+end
+--victory overlay handler
+local function victory()
+	modalOptions.params.background = selectedBackground
+	composer.showOverlay( "Scenes.Overlay.win", modalOptions )
 end
 --timer
 local function timeCounter( event )
@@ -192,11 +200,15 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		if(objt1.name == category and objt2.name == name)then
 			display.remove( objt2 )
 			score = score + 1
-			--print( score )
+			if( score == 25 )then --victory detector (expecting a score of 25 points)
+				victory()
+			end
 		elseif(objt2.name == category and objt1.name == name)then
 			display.remove( objt1 )
 			score = score + 1
-			print( score )
+			if( score == 25 )then ----victory detector (expecting a score of 25 points)
+				victory()
+			end
 		end
 	end
 	if( phase == "ended" )then 								--check the objects colliding when the collision ends
@@ -322,16 +334,15 @@ function scene:create( event )
 	sceneGroup:insert( backGroup ) 
 	local mainGroup = display.newGroup() -- game objects group
 	sceneGroup:insert( mainGroup ) 
-
 	local categoriesGroup = display.newGroup() --for spawm objects
 	sceneGroup:insert( categoriesGroup )
-
 	local uiGroup = display.newGroup() 	-- UI elements group
 	sceneGroup:insert( uiGroup ) 
 
 
 	local selectedBg = math.random( 1,5 )
-	background = display.newImageRect( backGroup, backgroundSet[selectedBg], 700, 375 ) --background
+	selectedBackground = backgroundSet[selectedBg]
+	background = display.newImageRect( backGroup, selectedBackground, 700, 375 ) --background
 	--applying blur to background
 	background.fill.effect = 'filter.blurGaussian'
 	background.fill.effect.horizontal.blurSize = 10
@@ -376,18 +387,18 @@ function scene:create( event )
 	basket.y = 260
 	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
 
-	-- local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
-	-- respawnButton.x = 545
-	-- respawnButton.y = 50
+	local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
+	respawnButton.x = 545
+	respawnButton.y = 16
 
-	local pauseButton = display.newImageRect( uiGroup, "Assets/Buttons/pause.png", 50, 25 )
-	pauseButton.x = 545
-	pauseButton.y = 16
+	-- local pauseButton = display.newImageRect( uiGroup, "Assets/Buttons/pause.png", 50, 25 )
+	-- pauseButton.x = 545
+	-- pauseButton.y = 16
 
-	pauseButton:addEventListener( "tap", pauseMenu )
-	-- respawnButton:addEventListener( "tap", respawnRow )
+	--pauseButton:addEventListener( "tap", pauseMenu )
+	respawnButton:addEventListener( "tap", respawnRow )
 	Runtime:addEventListener( "collision", collisionWithin )
-	backButton:addEventListener( "tap", gotoPlayMenu )
+	backButton:addEventListener( "tap", pauseMenu )
 end
 --show()
 function scene:show( event )
@@ -406,6 +417,9 @@ function scene:show( event )
 		db:exec( createTable )	--executing table creation query
 	elseif(phase == "did")then
 	end
+end
+--relaunch()
+function scene:reLaunch( event )
 end
 --hide()
 function scene:hide( event )
@@ -432,7 +446,10 @@ function scene:hide( event )
 		composer.removeScene( "GameMode.categorize" )		--Remove scene when scene goes away
 	end
 end
+function scene:destroy( event )
+end
 scene:addEventListener( "create", scene ) --Create scene listener
+scene:addEventListener( "destroy", scene ) --Destroy scene listener
 scene:addEventListener( "show", scene ) --Show scene listener
 scene:addEventListener( "hide", scene )	--Hide scene listener
 return scene
