@@ -16,9 +16,6 @@ local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
 local blocksSound = audio.loadSound( "Audio/blocks-falling.mp3" )
 local blocksPlay = nil
-
-audio.setMinVolume( 0.1 )
-audio.setMaxVolume( 0.35 )
 --button control functions
 local function gotoMenu()
 	chalkButton = audio.play( chalkSound )

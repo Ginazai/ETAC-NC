@@ -23,8 +23,8 @@ local playRewind = nil
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" ) --back button chalk sound
 local playChalk = nil
 
-audio.setMinVolume( 0.1 )	--setting volumes
-audio.setMaxVolume( 0.5 )
+local errorSound = audio.loadSound( "Audio/error.mp3" ) --error sound
+local playError = nil
 --variables for data control
 local score = 0 --initial score 
 local scoreText --for testing score, might remove
@@ -226,16 +226,19 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 			dropPlay = audio.play( dropSound )
 			display.remove( objt2 )
 			score = score + 1
-			if( score == 3 )then --victory detector (expecting a score of 25 points)
+			if( score == 25 )then --victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
 			display.remove( objt1 )
 			score = score + 1
-			if( score == 3 )then ----victory detector (expecting a score of 25 points)
+			if( score == 25 )then ----victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
+		elseif(objt1.name == category and objt2.name ~= name or 
+			objt2.name == category and objt1.name ~= name)then
+			playError = audio.play( errorSound )
 		end
 	end
 	if( phase == "ended" )then --check the objects colliding when the collision ends (removed. not needed)
@@ -491,6 +494,8 @@ function scene:hide( event )
 		if (dropPlay ~= nil)then audio.stop( dropPlay ) end
 		if (playRewind ~= nil)then audio.stop( playRewind ) end
 		if (playChalk ~= nil)then audio.stop( playChalk ) end
+	if (playError ~= nil)then audio.stop( playError ) end
+		playError = nil
 		dropPlay = nil
 		playRewind = nil
 		playChalk = nil

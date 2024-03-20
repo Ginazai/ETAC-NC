@@ -10,14 +10,19 @@ local logo
 local playButton
 local scoreButton
 --sounds
+local backgroundOptions = 
+{
+	loops = -1,
+	onComplete = callbackListener
+}
+local backgroundSound = audio.loadSound( "Audio/background.mp3" )
+audio.play( backgroundSound, backgroundOptions )
+
 local buttonSound = audio.loadSound( "Audio/magic-2.mp3" )
 local onPlayButton = nil
 
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
-
-audio.setMinVolume( 0.1 )
-audio.setMaxVolume( 0.35 )
 --buttons events
 local function gotoPlay()
 	onPlayButton = audio.play( buttonSound )
@@ -31,7 +36,6 @@ end
 -- Scene
 -----------------------------------------
 function scene:create( event )
-
 	local sceneGroup = self.view
 
 	background = display.newImageRect( sceneGroup, "Assets/Background/main.png", 900, 520 )
