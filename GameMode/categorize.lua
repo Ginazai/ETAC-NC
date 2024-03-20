@@ -102,7 +102,7 @@ local fSheet =
 	sheetContentWidth = 2931,
 	sheetContentHeight = 293
 }
-local ASheet = 	
+local aSheet = 	
 {	--Animals sheet frames
 	frames = 
 	{
@@ -171,8 +171,218 @@ local ASheet =
 	sheetContentWidth = 2931,
 	sheetContentHeight = 293
 }
+local cSheet = 	
+{	--Animals sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 285,
+			height = 240
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 250
+		},
+		{ --frame 8
+			x = 2049,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 9
+			x = 2343,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2636,
+			y = 0,
+			width = 295,
+			height = 240
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2928,
+	sheetContentHeight = 244
+}
+local pSheet = 	
+{	--Animals sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 293
+		},
+		{ --frame 8
+			x = 2049,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 9
+			x = 2343,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2636,
+			y = 0,
+			width = 295,
+			height = 293
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2930,
+	sheetContentHeight = 293
+}
+local vSheet = 	
+{	--Animals sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 293
+		},
+		{ --frame 8
+			x = 2049,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 9
+			x = 2343,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2636,
+			y = 0,
+			width = 295,
+			height = 293
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2930,
+	sheetContentHeight = 293
+}
 foodSheet = graphics.newImageSheet( "Assets/Food/food-sheet.png", fSheet )
-animalSheet = graphics.newImageSheet( "Assets/Animals/animals-sheet.png", ASheet )
+animalSheet = graphics.newImageSheet( "Assets/Animals/animals-sheet.png", aSheet )
+clothesSheet = graphics.newImageSheet( "Assets/Clothes/clothes-sheet.png", cSheet )
+plantsSheet = graphics.newImageSheet( "Assets/Plants/plants-sheet.png", pSheet )
+vehiclesSheet = graphics.newImageSheet( "Assets/Vehicles/vehicles-sheet.png", vSheet )
 -----------------------------------------
 -- Functions
 -----------------------------------------
@@ -224,14 +434,19 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 	if ( phase == "began" )then
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
-			display.remove( objt2 )
+			transition.from( objt2, { width=50, height=50, time=0 } )
+			transition.to( objt2, { width=0, height=0, time=100 } )
+			timer.performWithDelay( 5000, display.remove( objt2 ) )
+			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
 			if( score == 25 )then --victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
-			display.remove( objt1 )
+			transition.from( objt1, { width=50, height=50, time=0 } )
+			transition.to( objt1, { width=0, height=0, time=100 } )
+			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
 			if( score == 25 )then ----victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
@@ -248,6 +463,9 @@ end
 local function collisionWithin( event )
 	collisionOcurred( event, "animal", "animalBasket" )
 	collisionOcurred( event, "food", "foodBasket" )
+	collisionOcurred( event, "cloth", "clothesBasket" )
+	collisionOcurred( event, "plant", "plantsBasket" )
+	collisionOcurred( event, "vehicle", "vehiclesBasket" )
 end
 -- Activate multitouch (not currently needed)
 local function dragItem( event ) --drag: touch detector + collision detector
@@ -287,13 +505,13 @@ local function dragItem( event ) --drag: touch detector + collision detector
 end
 --spawn handler
 local function spawnRow( group, rowX, rowY )
-	local options = { foodSheet, animalSheet } 
+	local options = { foodSheet, animalSheet, clothesSheet,plantsSheet, vehiclesSheet } 
 	local group = group
 	local initX = rowX
 	local rowY = rowY
 
 	for i = 1, 5 do
-		local typeSelector = math.random( 1, 2 )	--random selectors for spawming
+		local typeSelector = math.random( 1, 5 )	--random selectors for spawming
 		local objectSelector = math.random( 1, 10 )
 		--categorizing the objects 
 		local frame = display.newImageRect( group, options[typeSelector], objectSelector, 50, 50 )
@@ -315,6 +533,33 @@ local function spawnRow( group, rowX, rowY )
 					text = "Animals"
 				}
 			end	
+		elseif(options[typeSelector] == clothesSheet)then
+			frame.name = "cloth"
+			if not( selectedBasket["name"] )then
+				selectedBasket = {						--basket partially random selector 
+					name = "clothesBasket",
+					src = "Assets/Clothes/clothes-basket.png",
+					text = "Clothes"
+				}
+			end
+		elseif(options[typeSelector] == plantsSheet)then
+			frame.name = "plant"
+			if not( selectedBasket["name"] )then
+				selectedBasket = {						--basket partially random selector 
+					name = "plantsBasket",
+					src = "Assets/Plants/plants-basket.png",
+					text = "Plants"
+				}
+			end	
+		elseif(options[typeSelector] == vehiclesSheet)then
+			frame.name = "vehicle"
+			if not( selectedBasket["name"] )then
+				selectedBasket = {						--basket partially random selector 
+					name = "vehiclesBasket",
+					src = "Assets/Vehicles/vehicles-basket.png",
+					text = "Vehicles"
+				}
+			end
 		end
 		frame.x = initX 
 		frame.y = rowY
