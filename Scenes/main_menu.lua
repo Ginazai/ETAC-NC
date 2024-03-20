@@ -9,12 +9,23 @@ local board
 local logo
 local playButton
 local scoreButton
+--sounds
+local buttonSound = audio.loadSound( "Audio/magic-2.mp3" )
+local onPlayButton = nil
+
+local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
+local chalkButton = nil
+
+audio.setMinVolume( 0.1 )
+audio.setMaxVolume( 0.35 )
 --buttons events
 local function gotoPlay()
-	composer.gotoScene( "Scenes.play_menu", { time=500, effect="slideLeft" } )
+	onPlayButton = audio.play( buttonSound )
+	composer.gotoScene( "Scenes.play_menu", { time=700, effect="slideLeft" } )
 end
 local function gotoScore()
-	composer.gotoScene( "Scenes.scores", { time=500, effect="slideLeft" } )
+	chalkButton = audio.play( chalkSound )
+	composer.gotoScene( "Scenes.scores", { time=700, effect="slideUp" } )
 end
 -----------------------------------------
 -- Scene
@@ -47,5 +58,18 @@ function scene:create( event )
 	playButton:addEventListener( "tap", gotoPlay )
 	scoreButton:addEventListener( "tap", gotoScore )
 end
+--hide()
+function scene:hide( event )
+	local phase = event.phase
+
+	if( phase == "will" )then
+	elseif( phase == "did" )then
+		if (onPlayButton ~= nil)then audio.stop( onPlayButton ) end
+		if (chalkButton ~= nil)then audio.stop( chalkButton ) end
+		onPlayButton = nil
+		chalkButton = nil
+	end
+end
 scene:addEventListener( "create", scene )
+scene:addEventListener( "hide", scene )
 return scene

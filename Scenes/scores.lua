@@ -11,6 +11,9 @@ local background
 local board
 local backButton
 local rowText = ""
+--sound effects
+local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
+local chalkButton = nil
 --invoque DB
 local path = system.pathForFile( "data.db", system.DocumentsDirectory ) --path for DB
 local db = sqlite.open( path ) --opening DB 
@@ -69,7 +72,8 @@ local function insertRows() --function for inserting rows
 end
 --button control
 local function gotoMenu()
-	composer.gotoScene( "Scenes.main_menu", { time=500, effect="slideRight" } )
+	chalkButton = audio.play( chalkSound )
+	composer.gotoScene( "Scenes.main_menu", { time=350, effect="slideDown" } )
 end
 -----------------------------------------
 -- Scene
@@ -106,6 +110,9 @@ function scene:hide( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
+		if (chalkButton ~= nil)then audio.stop( chalkButton ) end
+		chalkButton = nil
+
 		composer.removeScene( "Scenes.scores" )
 		db:close()	
 	end

@@ -4,12 +4,17 @@
 --libraries
 local composer = require( "composer" )
 local scene = composer.newScene()
+--Sounds
+local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" ) --back button chalk sound
+local playChalk = nil
 --functions
 local function gotoMenu()
-	composer.gotoScene( "Scenes.play_menu" ) 
+	playChalk = audio.play( chalkSound )
+	composer.gotoScene( "Scenes.play_menu", { time=100, effect="slideUp" } ) 
 end
 local function onResume()
-	composer.hideOverlay()
+	playChalk = audio.play( chalkSound )
+	composer.hideOverlay( "slideUp", 175 )
 end
 -----------------------------------------
 -- Scenes
