@@ -13,6 +13,7 @@ local db = sqlite.open( path ) 											--opening DB
 local background
 local selectedBackground
 local backButton
+local selectedSheets = {}
 --sound handling (currently there's no need to create a soud table. might need if more resources are added)
 local dropSound = audio.loadSound( "Audio/drop.mp3" ) --dropping sound
 local dropPlay = nil
@@ -505,17 +506,36 @@ local function dragItem( event ) --drag: touch detector + collision detector
 end
 --spawn handler
 local function spawnRow( group, rowX, rowY )
-	local options = { foodSheet, animalSheet, clothesSheet,plantsSheet, vehiclesSheet } 
+	local options = { foodSheet, animalSheet, clothesSheet, plantsSheet, vehiclesSheet } 
+	if(selectedSheets[1] == nil)then
+		local i = 1
+		while (i < 3) do
+			local sheet = options[math.random( 1, 5 )]
+			if( table.indexOf( selectedSheets, sheet ) == nil )then
+				table.insert( selectedSheets, sheet )
+				i = i + 1
+			else
+				if(i > 1)then 
+					i = i - 1 
+				else
+					i = 1
+				end
+			end
+		end
+	end
+	print( json.prettify( selectedSheets ) )
 	local group = group
 	local initX = rowX
 	local rowY = rowY
 
 	for i = 1, 5 do
-		local typeSelector = math.random( 1, 5 )	--random selectors for spawming
+		local typeSelector = math.random( 1, 2 )	--random selectors for spawming
 		local objectSelector = math.random( 1, 10 )
+		local m = tostring( selectedSheets[typeSelector] )
+		print( m )
 		--categorizing the objects 
-		local frame = display.newImageRect( group, options[typeSelector], objectSelector, 50, 50 )
-		if(options[typeSelector] == foodSheet)then		--Assigning names to each element within
+		local frame = display.newImageRect( group, selectedSheets[typeSelector], objectSelector, 50, 50 )
+		if(selectedSheets[typeSelector] == foodSheet)then		--Assigning names to each element within
 			frame.name = "food"							--the loop for categorizing them
 			if not( selectedBasket["name"] )then
 				selectedBasket = {						--basket partially random selector 
@@ -524,7 +544,7 @@ local function spawnRow( group, rowX, rowY )
 					text = "Food"
 				}
 			end		
-		elseif(options[typeSelector] == animalSheet)then
+		elseif(selectedSheets[typeSelector] == animalSheet)then
 			frame.name = "animal"
 			if not( selectedBasket["name"] )then
 				selectedBasket = {						--basket partially random selector 
@@ -533,7 +553,7 @@ local function spawnRow( group, rowX, rowY )
 					text = "Animals"
 				}
 			end	
-		elseif(options[typeSelector] == clothesSheet)then
+		elseif(selectedSheets[typeSelector] == clothesSheet)then
 			frame.name = "cloth"
 			if not( selectedBasket["name"] )then
 				selectedBasket = {						--basket partially random selector 
@@ -542,7 +562,7 @@ local function spawnRow( group, rowX, rowY )
 					text = "Clothes"
 				}
 			end
-		elseif(options[typeSelector] == plantsSheet)then
+		elseif(selectedSheets[typeSelector] == plantsSheet)then
 			frame.name = "plant"
 			if not( selectedBasket["name"] )then
 				selectedBasket = {						--basket partially random selector 
@@ -551,7 +571,7 @@ local function spawnRow( group, rowX, rowY )
 					text = "Plants"
 				}
 			end	
-		elseif(options[typeSelector] == vehiclesSheet)then
+		elseif(selectedSheets[typeSelector] == vehiclesSheet)then
 			frame.name = "vehicle"
 			if not( selectedBasket["name"] )then
 				selectedBasket = {						--basket partially random selector 
@@ -637,11 +657,6 @@ function scene:create( event )
 	backButton = display.newImageRect( uiGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
 	backButton.x = 0
 	backButton.y = 16
-
-	--for trying spreadsheet crop
-	-- local testImage = display.newImageRect( mainGroup, animalSheet, 10, 50, 50 ) 
-	-- testImage.x = display.contentCenterX
-	-- testImage.y = display.contentCenterY
 
 	local secondBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 515, 325 )
 	secondBoard.x = 160
