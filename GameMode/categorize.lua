@@ -31,6 +31,8 @@ local score = 0 --initial score
 local scoreText --for testing score, might remove
 local timeSpend = 0 --initial time
 local selectedBasket = {} --for basket selection (logic is not scalable, should be rethink)
+local mainSheet = nil
+local secondarySheet = nil
 -----------------------------------------
 -- Sheets
 -----------------------------------------
@@ -437,7 +439,6 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 			dropPlay = audio.play( dropSound )
 			transition.from( objt2, { width=50, height=50, time=0 } )
 			transition.to( objt2, { width=0, height=0, time=100 } )
-			timer.performWithDelay( 5000, display.remove( objt2 ) )
 			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
 			if( score == 25 )then --victory detector (expecting a score of 25 points)
@@ -497,8 +498,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		event.target.alpha = 1
 		--reset the initial target position
 		if(target == startingTarget)then
-			target.x = defaultX
-			target.y = defaultY
+			transition.to( target, { x=defaultX, y=defaultY, time=200 } )
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
@@ -507,22 +507,37 @@ end
 --spawn handler
 local function spawnRow( group, rowX, rowY )
 	local options = { foodSheet, animalSheet, clothesSheet, plantsSheet, vehiclesSheet } 
-	if(selectedSheets[1] == nil)then
+
+	if(selectedSheets[2] == nil)then
+		print( "mainsheet not set" )
 		local i = 1
 		while (i < 3) do
-			local sheet = options[math.random( 1, 5 )]
-			if( table.indexOf( selectedSheets, sheet ) == nil )then
+			sheet = options[math.random( 1, 5 )]
+			selectedSheet = table.indexOf( selectedSheets, sheet )
+			if( selectedSheet == nil )then
 				table.insert( selectedSheets, sheet )
 				i = i + 1
 			else
-				if(i > 1)then 
-					i = i - 1 
-				else
-					i = 1
-				end
+				mainSheet = table.indexOf( selectedSheets, sheet )
+				print( "main sheet: " .. mainSheet )
+				local altSheet = nil
+
+				if( (options[selectedSheet + 1]) == nil )then altSheet = options[selectedSheet - 1] end 
+				if( (options[selectedSheet - 1]) == nil )then altSheet = options[selectedSheet + 1] end 
+				table.insert( selectedSheets, altSheet )
+				i = i + 1
 			end
 		end
+	else
+		-- print( "mainsheet is set" )
+		-- if( (mainSheet + 1) == nil )then secondarySheet = mainSheet - 1 end 
+		-- if( (mainSheet - 1) == nil )then secondarySheet = mainSheet + 1 end 
+
+		-- local secondarySelector = options[math.random( 1, 5 )]
+		-- table.remove( selectedSheets, secondarySheet )
+		-- table.insert( selectedSheets, secondarySelector )
 	end
+
 	print( json.prettify( selectedSheets ) )
 	local group = group
 	local initX = rowX
@@ -595,6 +610,7 @@ local function spawnRow( group, rowX, rowY )
 end
 local function respawn( group ) --for repawming elements 
 	playRewind = audio.play( rewindSound )
+	selectedSheets = {}
 
 	local group = group
 	local elem_amount = group.numChildren
