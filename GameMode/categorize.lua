@@ -28,6 +28,7 @@ local errorSound = audio.loadSound( "Audio/error.mp3" ) --error sound
 local playError = nil
 --variables for data control
 local score = 0 --initial score 
+local expectedScore = 5 -- expected score for the level
 local scoreText --for testing score, might remove
 local timeSpend = 0 --initial time
 local selectedBasket = {} --for basket selection (logic is not scalable, should be rethink)
@@ -416,7 +417,7 @@ local function victory() --victory handler (implement configuration above)
 	modalVictory.params.timeSpend = timeSpend --passed the time at the moment of the call to ignore the time that the
 											  --overlay last
 	modalVictory.params.background = selectedBackground
-	composer.showOverlay( "Scenes.Overlay.win", modalVictory )
+	composer.showOverlay( "Scenes.Overlay.categorize_1_win", modalVictory )
 end
 --timer
 local function timeCounter( event )
@@ -441,7 +442,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 			transition.to( objt2, { width=0, height=0, time=100 } )
 			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
-			if( score == 25 )then --victory detector (expecting a score of 25 points)
+			if( score == expectedScore )then --victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt2.name == category and objt1.name == name)then
@@ -450,7 +451,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 			transition.to( objt1, { width=0, height=0, time=100 } )
 			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
-			if( score == 25 )then ----victory detector (expecting a score of 25 points)
+			if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt1.name == category and objt2.name ~= name or 
@@ -498,7 +499,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		event.target.alpha = 1
 		--reset the initial target position
 		if(target == startingTarget)then
-			transition.to( target, { x=defaultX, y=defaultY, time=200 } )
+			transition.to( target, { x=defaultX, y=defaultY, time=500 } )
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
@@ -506,36 +507,36 @@ local function dragItem( event ) --drag: touch detector + collision detector
 end
 --spawn handler
 local function spawnRow( group, rowX, rowY )
-	local options = { foodSheet, animalSheet, clothesSheet, plantsSheet, vehiclesSheet } 
+	options = { foodSheet, animalSheet, clothesSheet, plantsSheet, vehiclesSheet } 
 
-	if(selectedSheets[2] == nil)then
-		print( "mainsheet not set" )
-		local i = 1
-		while (i < 3) do
-			sheet = options[math.random( 1, 5 )]
-			selectedSheet = table.indexOf( selectedSheets, sheet )
-			if( selectedSheet == nil )then
-				table.insert( selectedSheets, sheet )
-				i = i + 1
+	if( selectedSheets[1] == nil )then
+		for i = 1, 2 do
+			local sheet = math.random( 1, 5 )
+			local sheetName = options[sheet]
+			if( table.indexOf( selectedSheets, sheetName ) == nil and mainSheet ~= sheetName )then
+				print( "if 1: sheet was not found nor is main sheet" )
+				if( mainSheet ~= nil and i < 2 )then
+					print( "if 2: mainSheet is not nil and i < 2" )
+					table.insert( selectedSheets, mainSheet )
+					table.insert( selectedSheets, sheetName )
+					break
+				else
+					print( "else 2: mainSheet is nil or i < 2" )
+					if( i == 1 )then mainSheet = sheetName end
+					table.insert( selectedSheets, sheetName )
+				end
 			else
-				mainSheet = table.indexOf( selectedSheets, sheet )
-				print( "main sheet: " .. mainSheet )
-				local altSheet = nil
-
-				if( (options[selectedSheet + 1]) == nil )then altSheet = options[selectedSheet - 1] end 
-				if( (options[selectedSheet - 1]) == nil )then altSheet = options[selectedSheet + 1] end 
-				table.insert( selectedSheets, altSheet )
-				i = i + 1
+				print( "else 1: sheet was found or is main sheet" )
+				if(options[sheet+1] ~= nil)then sheetName = options[sheet+1] end
+				if(options[sheet-1] ~= nil)then sheetName = options[sheet-1] end
+				table.insert( selectedSheets, sheetName )
+				if( mainSheet ~= nil )then
+					table.insert( selectedSheets, mainSheet )
+					break
+				end
 			end
+			
 		end
-	else
-		-- print( "mainsheet is set" )
-		-- if( (mainSheet + 1) == nil )then secondarySheet = mainSheet - 1 end 
-		-- if( (mainSheet - 1) == nil )then secondarySheet = mainSheet + 1 end 
-
-		-- local secondarySelector = options[math.random( 1, 5 )]
-		-- table.remove( selectedSheets, secondarySheet )
-		-- table.insert( selectedSheets, secondarySelector )
 	end
 
 	print( json.prettify( selectedSheets ) )
@@ -546,13 +547,11 @@ local function spawnRow( group, rowX, rowY )
 	for i = 1, 5 do
 		local typeSelector = math.random( 1, 2 )	--random selectors for spawming
 		local objectSelector = math.random( 1, 10 )
-		local m = tostring( selectedSheets[typeSelector] )
-		print( m )
 		--categorizing the objects 
 		local frame = display.newImageRect( group, selectedSheets[typeSelector], objectSelector, 50, 50 )
 		if(selectedSheets[typeSelector] == foodSheet)then		--Assigning names to each element within
 			frame.name = "food"							--the loop for categorizing them
-			if not( selectedBasket["name"] )then
+			if not( selectedBasket["name"] and mainSheet == foodSheet)then
 				selectedBasket = {						--basket partially random selector 
 					name = "foodBasket",
 					src = "Assets/Food/food-basket.png",
@@ -561,7 +560,7 @@ local function spawnRow( group, rowX, rowY )
 			end		
 		elseif(selectedSheets[typeSelector] == animalSheet)then
 			frame.name = "animal"
-			if not( selectedBasket["name"] )then
+			if not( selectedBasket["name"] and mainSheet == animalSheet )then
 				selectedBasket = {						--basket partially random selector 
 					name = "animalBasket",
 					src = "Assets/Animals/animals-basket.png",
@@ -570,7 +569,7 @@ local function spawnRow( group, rowX, rowY )
 			end	
 		elseif(selectedSheets[typeSelector] == clothesSheet)then
 			frame.name = "cloth"
-			if not( selectedBasket["name"] )then
+			if not( selectedBasket["name"] and mainSheet == clothesSheet )then
 				selectedBasket = {						--basket partially random selector 
 					name = "clothesBasket",
 					src = "Assets/Clothes/clothes-basket.png",
@@ -579,7 +578,7 @@ local function spawnRow( group, rowX, rowY )
 			end
 		elseif(selectedSheets[typeSelector] == plantsSheet)then
 			frame.name = "plant"
-			if not( selectedBasket["name"] )then
+			if not( selectedBasket["name"] and mainSheet == plantsSheet )then
 				selectedBasket = {						--basket partially random selector 
 					name = "plantsBasket",
 					src = "Assets/Plants/plants-basket.png",
@@ -588,7 +587,7 @@ local function spawnRow( group, rowX, rowY )
 			end	
 		elseif(selectedSheets[typeSelector] == vehiclesSheet)then
 			frame.name = "vehicle"
-			if not( selectedBasket["name"] )then
+			if not( selectedBasket["name"] and mainSheet == vehiclesSheet )then
 				selectedBasket = {						--basket partially random selector 
 					name = "vehiclesBasket",
 					src = "Assets/Vehicles/vehicles-basket.png",
@@ -610,7 +609,7 @@ local function spawnRow( group, rowX, rowY )
 end
 local function respawn( group ) --for repawming elements 
 	playRewind = audio.play( rewindSound )
-	selectedSheets = {}
+	--selectedSheets = {}
 
 	local group = group
 	local elem_amount = group.numChildren
@@ -624,6 +623,14 @@ local function respawn( group ) --for repawming elements
 	spawnRow( group, 35, 110 ) 
 	spawnRow( group, 35, 185 ) 
 	spawnRow( group, 35, 260 ) 
+	--redisplay text-box
+	local textBox = display.newImageRect( group, "Assets/Background/text-box.png", 200, 100 )
+	textBox.x = 475
+	textBox.y = 100
+	--redisplay text
+	local textCategory = display.newText( group, selectedBasket["text"], 475, 110, "Fonts/FORTE.TTF", 35 )
+	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
+	textCategory:setTextColor( 1, 0.85, 0.31  )
 	--redisplay the basket
 	local basket = display.newImageRect( group, selectedBasket["src"], 200, 100 )
 	basket.name = selectedBasket["name"]
@@ -685,7 +692,7 @@ function scene:create( event )
 	basketBoard.x = 475
 	basketBoard.y = 260
 
-	local textBox = display.newImageRect( uiGroup, "Assets/Background/text-box.png", 200, 100 )
+	local textBox = display.newImageRect( categoriesGroup, "Assets/Background/text-box.png", 200, 100 )
 	textBox.x = 475
 	textBox.y = 100
 
@@ -693,16 +700,16 @@ function scene:create( event )
 	spawnRow( categoriesGroup, 35, 185 )
 	spawnRow( categoriesGroup, 35, 260 )
 
-	local textCategory = display.newText( uiGroup, selectedBasket["text"], 475, 110, "Fonts/FORTE.TTF", 35 )
-	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
-	textCategory:setTextColor( 1, 0.85, 0.31  )
-
 	-- transition.from( textCategory, { alpha=0, size=0 } )
 	-- transition.to( textCategory, { alpha=1, size=35, time=500 } )
 
 	local function respawnRow( event )
 		respawn( categoriesGroup )
 	end
+
+	local textCategory = display.newText( categoriesGroup, selectedBasket["text"], 475, 110, "Fonts/FORTE.TTF", 35 )
+	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
+	textCategory:setTextColor( 1, 0.85, 0.31  )
 
 	local basket = display.newImageRect( categoriesGroup, selectedBasket["src"], 200, 100 )
 	basket.name = selectedBasket["name"]
@@ -751,6 +758,7 @@ function scene:hide( event )
 	if (phase == "will") then
 		timer.cancel( currentTime ) --stop time counter
 	elseif (phase == "did") then
+		print( "level 1 hiden" )
 		--inserting into DB 
 		if( saveTime ~= nil)then
 			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[" );]]
@@ -761,11 +769,6 @@ function scene:hide( event )
 			    print( "total time: "..row.time_spend )
 			end
 		end
-		db:close() --close DB
-		physics.stop() -- stopping physics when scene stops
-		Runtime:removeEventListener( "tap", gotoPlayMenu ) 	--Go Back button listener
-		Runtime:removeEventListener( "collision", collisionWithin ) -- Remove collision event listener
-		composer.removeScene( "GameMode.categorize" )		--Remove scene when scene goes away
 		--deleting audio files
 		if (dropPlay ~= nil)then audio.stop( dropPlay ) end
 		if (playRewind ~= nil)then audio.stop( playRewind ) end
@@ -775,6 +778,12 @@ function scene:hide( event )
 		dropPlay = nil
 		playRewind = nil
 		playChalk = nil
+	db:close() --close DB
+	physics.stop() -- stopping physics when scene stops
+	print( "physics should be stop" )
+	Runtime:removeEventListener( "tap", gotoPlayMenu ) 	--Go Back button listener
+	Runtime:removeEventListener( "collision", collisionWithin ) -- Remove collision event listener
+	composer.removeScene( "GameMode.categorize" )		--Remove scene when scene goes away
 	end
 end
 function scene:destroy( event )

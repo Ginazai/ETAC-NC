@@ -417,7 +417,7 @@ local function victory() --victory handler (implement configuration above)
 	modalVictory.params.timeSpend = timeSpend --passed the time at the moment of the call to ignore the time that the
 											  --overlay last
 	modalVictory.params.background = selectedBackground
-	composer.showOverlay( "Scenes.Overlay.categorize_2_win", modalVictory )
+	composer.showOverlay( "Scenes.Overlay.categorize_3_win", modalVictory )
 end
 --timer
 local function timeCounter( event )
@@ -440,9 +440,6 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 			dropPlay = audio.play( dropSound )
 			transition.from( objt2, { width=50, height=50, time=0 } )
 			transition.to( objt2, { width=0, height=0, time=100 } )
-			print( json.prettify(selectedBasket) )
-			print( "object 1: " .. objt1.name )
-			print( "object 2: " .. objt2.name )
 			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
 			if( score == expectedScore )then --victory detector (expecting a score of 25 points)
@@ -452,9 +449,6 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 			dropPlay = audio.play( dropSound )
 			transition.from( objt1, { width=50, height=50, time=0 } )
 			transition.to( objt1, { width=0, height=0, time=100 } )
-			print( json.prettify(selectedBasket) )
-			print( "object 2: " .. objt2.name )
-			print( "object 1: " .. objt1.name )
 			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
 			if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
@@ -556,45 +550,55 @@ local function spawnRow( group, rowX, rowY )
 		--categorizing the objects 
 		local frame = display.newImageRect( group, selectedSheets[typeSelector], objectSelector, 50, 50 )
 		if(selectedSheets[typeSelector] == foodSheet)then		--Assigning names to each element within
-			frame.name = "food"	
-			selectedBasket = {}						--the loop for categorizing them
-			selectedBasket = {						--basket partially random selector 
-				name = "foodBasket",
-				src = "Assets/Food/food-basket.png",
-				text = "Food"
-			}	
+			frame.name = "food"							--the loop for categorizing them
+			if( mainSheet == foodSheet )then
+				selectedBasket = {}
+				selectedBasket = {						--basket partially random selector 
+					name = "foodBasket",
+					src = "Assets/Food/food-basket.png",
+					text = "Food"
+				}
+			end	
 		elseif(selectedSheets[typeSelector] == animalSheet)then
 			frame.name = "animal"
-			selectedBasket = {}
-			selectedBasket = {						--basket partially random selector 
-				name = "animalBasket",
-				src = "Assets/Animals/animals-basket.png",
-				text = "Animals"
-			}
+			if( mainSheet == animalSheet )then
+				selectedBasket = {}
+				selectedBasket = {						--basket partially random selector 
+					name = "animalBasket",
+					src = "Assets/Animals/animals-basket.png",
+					text = "Animals"
+				}
+			end
 		elseif(selectedSheets[typeSelector] == clothesSheet)then
 			frame.name = "cloth"
-			selectedBasket = {}
-			selectedBasket = {						--basket partially random selector 
-				name = "clothesBasket",
-				src = "Assets/Clothes/clothes-basket.png",
-				text = "Clothes"
-			}
+			if( mainSheet == clothesSheet )then
+				selectedBasket = {}
+				selectedBasket = {						--basket partially random selector 
+					name = "clothesBasket",
+					src = "Assets/Clothes/clothes-basket.png",
+					text = "Clothes"
+				}
+			end
 		elseif(selectedSheets[typeSelector] == plantsSheet)then
 			frame.name = "plant"
-			selectedBasket = {}
-			selectedBasket = {						--basket partially random selector 
-				name = "plantsBasket",
-				src = "Assets/Plants/plants-basket.png",
-				text = "Plants"
-			}
+			if( mainSheet == plantsSheet )then
+				selectedBasket = {}
+				selectedBasket = {						--basket partially random selector 
+					name = "plantsBasket",
+					src = "Assets/Plants/plants-basket.png",
+					text = "Plants"
+				}
+			end
 		elseif(selectedSheets[typeSelector] == vehiclesSheet)then
 			frame.name = "vehicle"
-			selectedBasket = {}
-			selectedBasket = {						--basket partially random selector 
-				name = "vehiclesBasket",
-				src = "Assets/Vehicles/vehicles-basket.png",
-				text = "Vehicles"
-			}
+			if( mainSheet == vehiclesSheet )then
+				selectedBasket = {}
+				selectedBasket = {						--basket partially random selector 
+					name = "vehiclesBasket",
+					src = "Assets/Vehicles/vehicles-basket.png",
+					text = "Vehicles"
+				}
+			end
 		end
 		frame.x = initX 
 		frame.y = rowY
@@ -610,6 +614,7 @@ local function spawnRow( group, rowX, rowY )
 end
 local function respawn( group ) --for repawming elements 
 	playRewind = audio.play( rewindSound )
+	selectedSheets = {}
 
 	local group = group
 	local elem_amount = group.numChildren
@@ -664,7 +669,6 @@ function scene:show( event )
 		local sceneGroup = self.view 		--scene view
 		local physics = require( "physics" ) --implementing physics
 		physics.start()
-		print( "physics should have been called. on scene creation" )
 		physics.setGravity( 0,0 )
 		local backGroup = display.newGroup() -- background elements group
 		sceneGroup:insert( backGroup ) 
@@ -744,6 +748,10 @@ function scene:show( event )
 		backButton:addEventListener( "tap", pauseMenu )
 	end
 end
+--relaunch()
+function scene:reLaunch( event ) --to keep timer continuity
+ timeSpend = modalVictory.params.timeSpend
+end
 --hide()
 function scene:hide( event )
 	local sceneGroup = self.view
@@ -752,7 +760,7 @@ function scene:hide( event )
 	if (phase == "will") then
 		timer.cancel( currentTime ) --stop time counter
 	elseif (phase == "did") then
-		print( "level 2 hiden" )
+		print( "level 3 hiden" )
 		--inserting into DB 
 		if( saveTime ~= nil)then
 			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[" );]]
@@ -776,7 +784,7 @@ function scene:hide( event )
 		dropPlay = nil
 		playRewind = nil
 		playChalk = nil
-	composer.removeScene( "GameMode.categorize_2" )		--Remove scene when scene goes away
+	composer.removeScene( "GameMode.categorize_3" )		--Remove scene when scene goes away
 	end
 end
 function scene:destroy( event )
