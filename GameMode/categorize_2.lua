@@ -439,7 +439,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
 			transition.from( objt2, { width=50, height=50, time=0 } )
-			transition.to( objt2, { width=0, height=0, time=150 } )
+			transition.to( objt2, { width=0, height=0, time=200 } )
 			print( json.prettify(selectedBasket) )
 			print( "object 1: " .. objt1.name )
 			print( "object 2: " .. objt2.name )
@@ -451,7 +451,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
 			transition.from( objt1, { width=50, height=50, time=0 } )
-			transition.to( objt1, { width=0, height=0, time=150 } )
+			transition.to( objt1, { width=0, height=0, time=200 } )
 			print( json.prettify(selectedBasket) )
 			print( "object 2: " .. objt2.name )
 			print( "object 1: " .. objt1.name )
@@ -507,8 +507,8 @@ local function dragItem( event ) --drag: touch detector + collision detector
 	elseif (phase == "ended" or phase == "cancelled") then				--undesired effects
 		event.target.alpha = 1
 		--reset the initial target position
-		if(target == startingTarget)then
-			transition.to( target, { x=defaultX, y=defaultY, time=600 } )
+		if(target == startingTarget and sWidth == target.width)then
+			transition.to( target, { x=defaultX, y=defaultY, time=200 } )
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
@@ -639,7 +639,7 @@ local function respawn( group ) --for repawming elements
 	basket.name = selectedBasket["name"]
 	basket.x = 475
 	basket.y = 260
-	physics.addBody( basket, "static", { radius=1.25, outline=box_outline } ) --physics box
+	physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 	--print( json.prettify( selectedBasket ) )
 end
 -----------------------------------------
@@ -653,14 +653,14 @@ function scene:show( event )
 
 	if(phase == "will")then
 		--DB implementation when scene is gonna show
-		local testing = [[ DROP TABLE IF EXISTS scores;]] --WARNING!! Disable on production. Will drop the table on scene refresh
+		--local testing = [[ DROP TABLE IF EXISTS scores;]] --WARNING!! Disable on production. Will drop the table on scene refresh
 		local createTable = [[
 		CREATE TABLE IF NOT EXISTS scores (
 		id INTEGER PRIMARY KEY, 
 		score INTEGER NOT NULL,
 		time_spend TEXT NOT NULL);
 		]] --query
-		db:exec( testing ) 		--DISABLE!!
+		--db:exec( testing ) 		--DISABLE!!
 		db:exec( createTable )	--executing table creation query
 	elseif(phase == "did")then
 		currentTime = timer.performWithDelay( 1000, timeCounter, timeSpend )
@@ -733,7 +733,7 @@ function scene:show( event )
 		basket.name = selectedBasket["name"]
 		basket.x = 475
 		basket.y = 260
-		physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
+		physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 
 		transition.from( basket, { height=200, width=20, alpha=0, delay=700 } )
 		transition.to( basket, { height=100, width=200, alpha=1, time=600, delay=650 } )

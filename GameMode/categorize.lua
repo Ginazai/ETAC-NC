@@ -436,10 +436,11 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 	local category = boxName --get variable 1 locally (not doing this causes the function not to recognize the variables)
 	local name = typeName --get variable 2 locally (not doing this causes the function not to recognize the variables)
 	if ( phase == "began" )then
+		collisionTarget = objt1
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
 			transition.from( objt2, { width=50, height=50, time=0 } )
-			transition.to( objt2, { width=0, height=0, time=150 } )
+			transition.to( objt2, { width=0, height=0, time=200 } )
 			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
 			if( score == expectedScore )then --victory detector (expecting a score of 25 points)
@@ -448,7 +449,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
 			transition.from( objt1, { width=50, height=50, time=0 } )
-			transition.to( objt1, { width=0, height=0, time=150 } )
+			transition.to( objt1, { width=0, height=0, time=200 } )
 			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
 			if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
@@ -482,7 +483,6 @@ local function dragItem( event ) --drag: touch detector + collision detector
 									--switching too fast within targets
 
 		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
-
 		event.target.alpha = 0.8 --change transparency on touc
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		--calculate difference within event and object axis
@@ -501,8 +501,8 @@ local function dragItem( event ) --drag: touch detector + collision detector
 	elseif (phase == "ended" or phase == "cancelled") then				--undesired effects
 		event.target.alpha = 1
 		--reset the initial target position
-		if(target == startingTarget)then
-			transition.to( target, { x=defaultX, y=defaultY, time=600 } )
+		if(target == startingTarget and sWidth == target.width)then
+			transition.to( target, { x=defaultX, y=defaultY, time=200 } )
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
@@ -639,7 +639,7 @@ local function respawn( group ) --for repawming elements
 	basket.name = selectedBasket["name"]
 	basket.x = 475
 	basket.y = 260
-	physics.addBody( basket, "static", { radius=1.25, outline=box_outline } ) --physics box
+	physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 	--print( json.prettify( selectedBasket ) )
 end
 -----------------------------------------
@@ -718,7 +718,7 @@ function scene:create( event )
 	basket.name = selectedBasket["name"]
 	basket.x = 475
 	basket.y = 260
-	physics.addBody( basket, "static", { radius=1, outline=box_outline } ) --physics box
+	physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 
 	transition.from( basket, { height=200, width=20, alpha=0, delay=700 } )
 	transition.to( basket, { height=100, width=200, alpha=1, time=600, delay=650 } )
