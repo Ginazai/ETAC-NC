@@ -21,7 +21,7 @@ local function onExit() --exiting menu handler
 end
 local function onContinue() --continue menu handler 
 	playButtonSound = audio.play( playSound )
-	composer.gotoScene( "GameMode.categorize_2", { effect="zoomOutInFade", time=500 } )
+	composer.gotoScene( "GameMode.categorize_2", { effect="zoomOutInFade", time=300 } )
 end
 -----------------------------------------
 -- Scenes

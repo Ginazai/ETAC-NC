@@ -28,7 +28,7 @@ local errorSound = audio.loadSound( "Audio/error.mp3" ) --error sound
 local playError = nil
 --variables for data control
 local score = 0 --initial score 
-local expectedScore = 5 -- expected score for the level
+local expectedScore = 15 -- expected score for the level
 local scoreText --for testing score, might remove
 local timeSpend = 0 --initial time
 local selectedBasket = {} --for basket selection (logic is not scalable, should be rethink)
@@ -439,7 +439,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
 			transition.from( objt2, { width=50, height=50, time=0 } )
-			transition.to( objt2, { width=0, height=0, time=100 } )
+			transition.to( objt2, { width=0, height=0, time=150 } )
 			print( json.prettify(selectedBasket) )
 			print( "object 1: " .. objt1.name )
 			print( "object 2: " .. objt2.name )
@@ -451,7 +451,7 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
 			transition.from( objt1, { width=50, height=50, time=0 } )
-			transition.to( objt1, { width=0, height=0, time=100 } )
+			transition.to( objt1, { width=0, height=0, time=150 } )
 			print( json.prettify(selectedBasket) )
 			print( "object 2: " .. objt2.name )
 			print( "object 1: " .. objt1.name )
@@ -486,7 +486,9 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		startingTarget = event.target --for overlaping of events prevention 
 									--since Solar2d doesn't end the event when
 									--switching too fast within targets
-		--print( startingTarget.name )
+									
+		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
+
 		event.target.alpha = 0.8 --change transparency on touc
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		--calculate difference within event and object axis
@@ -497,7 +499,8 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		defaultY = target.y
 	elseif (phase == "moved") then
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
-		if(target.touchOffsetX ~= nil and target == startingTarget)then --"startingTarget" is saved at the 
+		if(target.touchOffsetX ~= nil and target == startingTarget
+		and sWidth == target.width)then 								--"startingTarget" is saved at the 
 			target.x = event.x - target.touchOffsetX					--beggining of the function while
 			target.y = event.y - target.touchOffsetY					--the "event.target" can vary due 
 		end 															--to conflict with times causing 
@@ -505,7 +508,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		event.target.alpha = 1
 		--reset the initial target position
 		if(target == startingTarget)then
-			transition.to( target, { x=defaultX, y=defaultY, time=500 } )
+			transition.to( target, { x=defaultX, y=defaultY, time=600 } )
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
@@ -555,6 +558,7 @@ local function spawnRow( group, rowX, rowY )
 		local objectSelector = math.random( 1, 10 )
 		--categorizing the objects 
 		local frame = display.newImageRect( group, selectedSheets[typeSelector], objectSelector, 50, 50 )
+		frame.alpha = 0
 		if(selectedSheets[typeSelector] == foodSheet)then		--Assigning names to each element within
 			frame.name = "food"	
 			selectedBasket = {}						--the loop for categorizing them
@@ -602,8 +606,7 @@ local function spawnRow( group, rowX, rowY )
 		physics.addBody( frame, "dynamic", { radius=50, isSensor=true } )
 		frame:addEventListener( "touch", dragItem )
 		--handling frame transition
-		transition.from( frame, { alpha=0, delay=450 } )
-		transition.to( frame, { alpha=1, time=450, delay=450 } )
+		transition.to( frame, { alpha=1, time=300 } )
 		--aligning in "x" axis
 		initX = initX + 60
 	end		

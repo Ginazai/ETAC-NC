@@ -21,7 +21,7 @@ local function onExit() --exiting menu handler
 end
 local function onContinue() --continue menu handler 
 	playButtonSound = audio.play( playSound )
-	composer.gotoScene( "GameMode.categorize_3", { effect="zoomOutInFade", time=500 } )
+	composer.gotoScene( "GameMode.categorize_3", { time=300, effect="zoomOutInFade" } )
 end
 -----------------------------------------
 -- Scenes
@@ -92,7 +92,7 @@ function scene:hide( event )
 		playWinAudio = nil 			--delete audio player from memory
 		audio.dispose( winAudio )	--dispose audio file (shouldn't be use if the scene is gonna repeat)
 		winAudio = nil				--set audio file to null
-		composer.removeScene( "GameMode.categorize_2" )		--Remove scene when scene goes away	end
+		composer.hideOverlay( "Scenes.Overlay.categorize_2_win" )		--Remove scene when scene goes away	end
 	end
 end
 --scenes listeners
