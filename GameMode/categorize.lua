@@ -18,7 +18,7 @@ local selectedSheets = {}
 local dropSound = audio.loadSound( "Audio/drop.mp3" ) --dropping sound
 local dropPlay = nil
 
-local rewindSound = audio.loadSound( "Audio/rewind.mp3" ) --rewind sound
+local rewindSound = audio.loadSound( "Audio/magic-2.mp3" ) --rewind sound
 local playRewind = nil
 
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" ) --back button chalk sound

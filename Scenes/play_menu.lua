@@ -10,8 +10,6 @@ local option1
 local option2
 local option3
 --sound handling (currently there's no need to create a soud table. might need if more resources are added)
-local buttonSound = audio.loadSound( "Audio/magic-2.mp3" )
-local playButtonSound = nil
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
 local blocksSound = audio.loadSound( "Audio/blocks-falling.mp3" )
@@ -23,12 +21,12 @@ local function gotoMenu()
 end
 
 local function gotoFree()
-	playButtonSound = audio.play( buttonSound )
+	chalkButton = audio.play( chalkSound )
 	composer.gotoScene( "GameMode.free", { time=700, effect="slideLeft" } )
 end
 
 local function gotoSelect()
-	playButtonSound = audio.play( buttonSound )
+	chalkButton = audio.play( chalkSound )
 	composer.gotoScene( "GameMode.select_right_one", { time=700, effect="slideLeft" } )
 end
 
@@ -46,17 +44,33 @@ function scene:create( event )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
 
+	local firstBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
+	firstBoard.x = display.contentCenterX - 105
+	firstBoard.y = 85
+
+	local secondBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
+	secondBoard.x = display.contentCenterX + 105
+	secondBoard.y = 85
+
+	local thirdBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
+	thirdBoard.x = display.contentCenterX - 105
+	thirdBoard.y = 235
+
+	local fourthBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
+	fourthBoard.x = display.contentCenterX + 105
+	fourthBoard.y = 235
+
 	option1 = display.newImageRect( sceneGroup, "Assets/Buttons/libre.png", 100, 125 )
-	option1.x = 120
-	option1.y = 100
+	option1.x = 135
+	option1.y = 90
 
 	option2 = display.newImageRect( sceneGroup, "Assets/Buttons/categorizar.png", 100, 125 )
-	option2.x = 360
-	option2.y = 113
+	option2.x = 345
+	option2.y = 90
 
-	option3 = display.newImageRect( sceneGroup, "Assets/Buttons/seleccion.png", 175, 100 )
-	option3.x = display.contentCenterX
-	option3.y = 225
+	option3 = display.newImageRect( sceneGroup, "Assets/Buttons/seleccion.png", 175, 120 )
+	option3.x = 345
+	option3.y = 235
 	
 	backButton = display.newImageRect( sceneGroup, "Assets/Buttons/back.png", 50, 25 )
 	backButton.x = 0
@@ -72,10 +86,8 @@ function scene:hide( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
-		if (onPlayButton ~= nil)then audio.stop( onPlayButton ) end
 		if (chalkButton ~= nil)then audio.stop( chalkButton ) end
 		if (blocksPlay ~= nil)then audio.stop( blocksPlay ) end
-		onPlayButton = nil
 		chalkButton = nil
 		blocksPlay = nil
 	end

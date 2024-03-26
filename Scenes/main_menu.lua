@@ -18,14 +18,11 @@ local backgroundOptions =
 local backgroundSound = audio.loadSound( "Audio/background.mp3" )
 audio.play( backgroundSound, backgroundOptions )
 
-local buttonSound = audio.loadSound( "Audio/magic-2.mp3" )
-local onPlayButton = nil
-
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
 --buttons events
 local function gotoPlay()
-	onPlayButton = audio.play( buttonSound )
+	chalkButton = audio.play( chalkSound )
 	composer.gotoScene( "Scenes.play_menu", { time=700, effect="slideLeft" } )
 end
 local function gotoScore()
@@ -68,9 +65,7 @@ function scene:hide( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
-		if (onPlayButton ~= nil)then audio.stop( onPlayButton ) end
 		if (chalkButton ~= nil)then audio.stop( chalkButton ) end
-		onPlayButton = nil
 		chalkButton = nil
 	end
 end
