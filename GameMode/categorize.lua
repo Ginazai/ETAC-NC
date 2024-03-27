@@ -1,5 +1,5 @@
 -----------------------------------------
--- Main Menu
+-- Categorize Level 1
 -----------------------------------------
 --file resources
 --system.activate( "multitouch" ) --(not needed)
@@ -436,13 +436,14 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 	local category = boxName --get variable 1 locally (not doing this causes the function not to recognize the variables)
 	local name = typeName --get variable 2 locally (not doing this causes the function not to recognize the variables)
 	if ( phase == "began" )then
-		collisionTarget = objt1
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
 			transition.from( objt2, { width=50, height=50, time=0 } )
 			transition.to( objt2, { width=0, height=0, time=200 } )
 			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
+			print( "object1: " .. objt1.name )
+			print( "object2: " .. objt2.name )
 			if( score == expectedScore )then --victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
@@ -452,12 +453,16 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 			transition.to( objt1, { width=0, height=0, time=200 } )
 			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
+			print( "object1: " .. objt1.name )
+			print( "object2: " .. objt2.name )
 			if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt1.name == category and objt2.name ~= name or 
 			objt2.name == category and objt1.name ~= name)then
 			playError = audio.play( errorSound )
+			print( "object1: " .. objt1.name )
+			print( "object2: " .. objt2.name )
 		end
 	end
 	if( phase == "ended" )then --check the objects colliding when the collision ends (removed. not needed)
@@ -541,12 +546,9 @@ local function spawnRow( group, rowX, rowY )
 			
 		end
 	end
-
-	print( json.prettify( selectedSheets ) )
 	local group = group
 	local initX = rowX
 	local rowY = rowY
-
 	for i = 1, 5 do
 		local typeSelector = math.random( 1, 2 )	--random selectors for spawming
 		local objectSelector = math.random( 1, 10 )
@@ -650,6 +652,7 @@ local backgroundSet = { "Assets/Background/kinder.png", "Assets/Background/kitch
 --create()
 function scene:create( event )
 	currentTime = timer.performWithDelay( 1000, timeCounter, timeSpend )
+	date = os.date( "%m/%d/%Y" ) 
 	local sceneGroup = self.view 		--scene view
 	local physics = require( "physics" ) --implementing physics
 	physics.start()
@@ -737,12 +740,13 @@ function scene:show( event )
 
 	if(phase == "will")then
 		--DB implementation when scene is gonna show
-		local testing = [[ DROP TABLE IF EXISTS scores;]] --WARNING!! Disable on production. Will drop the table on scene refresh
+		local testing = [[ DROP TABLE IF EXISTS scores; ]] --WARNING!! Disable on production. Will drop the table on scene refresh
 		local createTable = [[
 		CREATE TABLE IF NOT EXISTS scores (
 		id INTEGER PRIMARY KEY, 
 		score INTEGER NOT NULL,
-		time_spend TEXT NOT NULL);
+		time_spend VARCHAR(10) NOT NULL,
+		_date VARCHAR(15) NOT NULL);
 		]] --query
 		db:exec( testing ) 		--DISABLE!!
 		db:exec( createTable )	--executing table creation query
@@ -764,12 +768,13 @@ function scene:hide( event )
 		print( "level 1 hiden" )
 		--inserting into DB 
 		if( saveTime ~= nil)then
-			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[" );]]
+			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[", "]]..date..[[" );]]
 			db:exec( insertToDb )
 			for row in db:nrows("SELECT * FROM scores") do -- testing DB output
 			    print( "row id: "..row.id )
 			    print( "score: "..row.score )
 			    print( "total time: "..row.time_spend )
+			    print( "date: "..row._date )
 			end
 		end
 		--deleting audio files
@@ -783,7 +788,6 @@ function scene:hide( event )
 		playChalk = nil
 	db:close() --close DB
 	physics.stop() -- stopping physics when scene stops
-	print( "physics should be stop" )
 	Runtime:removeEventListener( "tap", gotoPlayMenu ) 	--Go Back button listener
 	Runtime:removeEventListener( "collision", collisionWithin ) -- Remove collision event listener
 	composer.removeScene( "GameMode.categorize" )		--Remove scene when scene goes away

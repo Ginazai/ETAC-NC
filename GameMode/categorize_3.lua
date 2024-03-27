@@ -1,5 +1,5 @@
 -----------------------------------------
--- Main Menu
+-- Categorize Level 3
 -----------------------------------------
 --file resources
 --system.activate( "multitouch" ) --(not needed)
@@ -670,6 +670,7 @@ function scene:show( event )
 		db:exec( createTable )	--executing table creation query
 	elseif(phase == "did")then
 		currentTime = timer.performWithDelay( 1000, timeCounter, timeSpend )
+		date = os.date( "%m/%d/%Y" ) 
 		local sceneGroup = self.view 		--scene view
 		local physics = require( "physics" ) --implementing physics
 		physics.start()
@@ -767,12 +768,13 @@ function scene:hide( event )
 		print( "level 3 hiden" )
 		--inserting into DB 
 		if( saveTime ~= nil)then
-			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[" );]]
+			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[", "]]..date..[[" );]]
 			db:exec( insertToDb )
 			for row in db:nrows("SELECT * FROM scores") do -- testing DB output
 			    print( "row id: "..row.id )
 			    print( "score: "..row.score )
 			    print( "total time: "..row.time_spend )
+			    print( "date: "..row._date )
 			end
 		end
 		db:close() --close DB

@@ -1,5 +1,5 @@
 -----------------------------------------
--- Victory Overlay
+-- Level 1 completed overlay
 -----------------------------------------
 --libraries
 local json = require( "json" )

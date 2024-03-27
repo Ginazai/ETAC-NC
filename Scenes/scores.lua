@@ -17,11 +17,35 @@ local chalkButton = nil
 --invoque DB
 local path = system.pathForFile( "data.db", system.DocumentsDirectory ) --path for DB
 local db = sqlite.open( path ) --opening DB 
+--in case there's no table it creates it 
+local createTable = [[ 
+CREATE TABLE IF NOT EXISTS scores (
+id INTEGER PRIMARY KEY, 
+score INTEGER NOT NULL,
+time_spend VARCHAR(10) NOT NULL,
+_date VARCHAR(15) NOT NULL);
+]]
+db:exec( createTable )
+--Create data report
+local function createReport()
+	local path = system.pathForFile( "data_report.csv", system.DocumentsDirectory )
+	local file = io.open( path, "w" )
+	local i = 1 
+	if( file ~= nil )then
+		for data in db:nrows("SELECT * FROM scores") do
+			if( i == 1 )then
+				file:write( "Date, Time spend, Total score \n" )
+			end
+			file:write( data._date .. ", " 
+			.. data.time_spend .. ", " .. data.score .. "\n")
+			i = i + 1
+		end
+	end
+end
 --Create table view for scores
 local function onRowRender( event )
 	-- Get reference to the row group
     local row = event.row
- 	print( row.params.id )
     -- Cache the row "contentWidth" and "contentHeight" because the row bounds can change as children objects are added
     local rowHeight = row.contentHeight
     local rowWidth = row.contentWidth
@@ -53,10 +77,11 @@ local tableView = widget.newTableView(
 )
 --inserting rows throught db data
 
-local function insertRows() --function for inserting rows 
+local function insertRows() --function for inserting rows 	
 	for row in db:nrows("SELECT * FROM scores") do -- DB output
 	    -- Insert a row into the tableView
-	    rowText = "Score: " .. row.score .. ", Time Elapse: " .. row.time_spend
+	    rowText = "Date: " .. row._date .. ", Time Elapse: " .. row.time_spend
+	    .. ", Score: " .. row.score
 	    tableView:insertRow(
 	        {
 	        	isCategory = false,
@@ -99,9 +124,18 @@ function scene:create( event )
 	backButton.x = 0
 	backButton.y = 20
 
-	insertRows()
+	local reportButton = display.newImageRect( sceneGroup, "Assets/Buttons/report.png", 100, 50 ) --level 2 button (level 2 not yet implemented)
+	reportButton.x = display.contentCenterX
+	reportButton.y = 305
+
+	local reportText = display.newText( sceneGroup, "Create report!", display.contentCenterX + 10, 303, "Fonts/FORTE.TTF", 10 )
+	reportText.font = native.newFont( "Fonts.FORTE", 16 )
+	reportText:setTextColor( 0.34, 0.27, 0.46  )
+
+	insertRows() 
 	sceneGroup:insert( tableView )
 	backButton:addEventListener( "tap", gotoMenu )
+	reportButton:addEventListener( "tap", createReport )
 end
 --hide()
 function scene:hide( event )
@@ -112,9 +146,9 @@ function scene:hide( event )
 	elseif( phase == "did" )then
 		if (chalkButton ~= nil)then audio.stop( chalkButton ) end
 		chalkButton = nil
-
+		db:close()
+		if(file~=nil)then io.close( file ) end
 		composer.removeScene( "Scenes.scores" )
-		db:close()	
 	end
 end
 scene:addEventListener( "create", scene )
