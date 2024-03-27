@@ -14,6 +14,9 @@ local rowText = ""
 --sound effects
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
+
+local magicSound = audio.loadSound( "Audio/magic-2.mp3" )
+local playMagic = nil
 --invoque DB
 local path = system.pathForFile( "data.db", system.DocumentsDirectory ) --path for DB
 local db = sqlite.open( path ) --opening DB 
@@ -32,6 +35,7 @@ local function createReport()
 	local file = io.open( path, "w" )
 	local i = 1 
 	if( file ~= nil )then
+		playMagic = audio.play( magicSound )
 		for data in db:nrows("SELECT * FROM scores") do
 			if( i == 1 )then
 				file:write( "Date, Time spend, Total score \n" )
@@ -40,6 +44,7 @@ local function createReport()
 			.. data.time_spend .. ", " .. data.score .. "\n")
 			i = i + 1
 		end
+		composer.showOverlay( "Scenes.Overlay.report_notification" )
 	end
 end
 --Create table view for scores
@@ -146,6 +151,8 @@ function scene:hide( event )
 	elseif( phase == "did" )then
 		if (chalkButton ~= nil)then audio.stop( chalkButton ) end
 		chalkButton = nil
+		if (playMagic ~= nil)then audio.stop( playMagic ) end
+		playMagic = nil
 		db:close()
 		if(file~=nil)then io.close( file ) end
 		composer.removeScene( "Scenes.scores" )
