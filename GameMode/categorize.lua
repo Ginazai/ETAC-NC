@@ -480,12 +480,14 @@ end
 local function dragItem( event ) --drag: touch detector + collision detector
 	local target = event.target
 	local id = event.id
-	local phase = event.phase	
-	
-	if (phase == "began")then --transforming positions	
+	local phase = event.phase
+
+	if (phase == "began")then --transforming positions
 		startingTarget = event.target --for overlaping of events prevention 
 									--since Solar2d doesn't end the event when
 									--switching too fast within targets
+
+		eventTimeStart = event.time
 
 		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
 		event.target.alpha = 0.8 --change transparency on touc
@@ -506,8 +508,14 @@ local function dragItem( event ) --drag: touch detector + collision detector
 	elseif (phase == "ended" or phase == "cancelled") then				--undesired effects
 		event.target.alpha = 1
 		--reset the initial target position
-		if(target == startingTarget and sWidth == target.width)then
-			transition.to( target, { x=defaultX, y=defaultY, time=200 } )
+		if(target == startingTarget)then
+			eventTimeEnd = event.time - eventTimeStart
+			local minutes = math.floor( eventTimeEnd / 6000 )
+			local seconds = math.floor( eventTimeEnd / 1000 )
+    		local miliseconds = eventTimeEnd % 1000
+    		eventTimeEnd = string.format( "%02d:%02d:%02d", minutes, seconds, miliseconds ) --time format
+			print(eventTimeEnd)
+			if(sWidth == target.width)then transition.to( target, { x=defaultX, y=defaultY, time=300 } ) end
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
