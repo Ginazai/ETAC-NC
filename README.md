@@ -8,7 +8,7 @@
 		data for health specialist to better understand the cognitive stage of the kid. 
 	</p>
 </div>
-<div id="content">
+<div id="content" width="100%">
 	<h2>Main Screen</h2>
 	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/bb7c26f2-c892-4cdf-b69e-0f3555d9d6aa">
 	<h2>Game mode menu</h2>
@@ -17,5 +17,6 @@
 	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/9764d73d-d9ac-4001-b50a-6b12a07f9ab5">
 	<h2>Current data reporting stage</h2>
 	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/f2a508a3-b174-4bad-b1e8-e76c203aedde">
-	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/9f5683b2-388c-42e6-84af-6d45683aa847">
+	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/9f5683b2-388c-42e6-84af-6d45683aa847"
+	style="margin-left: auto; margin-right: auto;">
 </div>
