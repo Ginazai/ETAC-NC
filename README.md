@@ -15,4 +15,7 @@
 	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/cbd307c7-4c04-46c0-8143-f5b328d9550e">
 	<h2>Categorize Game mode level 1</h2>
 	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/9764d73d-d9ac-4001-b50a-6b12a07f9ab5">
+	<h2>Current data reporting stage</h2>
+	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/f2a508a3-b174-4bad-b1e8-e76c203aedde">
+	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/9f5683b2-388c-42e6-84af-6d45683aa847">
 </div>
