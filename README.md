@@ -18,5 +18,5 @@
 	<h2>Current data reporting stage</h2>
 	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/f2a508a3-b174-4bad-b1e8-e76c203aedde">
 	<img src="https://github.com/Ginazai/stimulation-game/assets/67808421/9f5683b2-388c-42e6-84af-6d45683aa847"
-	style="margin-left: auto; margin-right: auto;">
+	width="100%" style="margin-left: auto; margin-right: auto;">
 </div>
