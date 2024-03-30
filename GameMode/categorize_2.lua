@@ -480,15 +480,17 @@ end
 local function dragItem( event ) --drag: touch detector + collision detector
 	local target = event.target
 	local id = event.id
-	local phase = event.phase	
-	
-	if (phase == "began")then --transforming positions	
+	local phase = event.phase
+
+	if (phase == "began")then --transforming positions
 		startingTarget = event.target --for overlaping of events prevention 
 									--since Solar2d doesn't end the event when
 									--switching too fast within targets
-									
-		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
 
+		eventTimeStart = event.time
+
+		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
+		sHeight = startingTarget.height
 		event.target.alpha = 0.8 --change transparency on touc
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		--calculate difference within event and object axis
@@ -499,16 +501,34 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		defaultY = target.y
 	elseif (phase == "moved") then
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
-		if(target.touchOffsetX ~= nil and target == startingTarget
-		and sWidth == target.width)then 								--"startingTarget" is saved at the 
+		if(target.touchOffsetX ~= nil and 
+			target == startingTarget)then 								--"startingTarget" is saved at the 
 			target.x = event.x - target.touchOffsetX					--beggining of the function while
 			target.y = event.y - target.touchOffsetY					--the "event.target" can vary due 
 		end 															--to conflict with times causing 
 	elseif (phase == "ended" or phase == "cancelled") then				--undesired effects
 		event.target.alpha = 1
 		--reset the initial target position
-		if(target == startingTarget and sWidth == target.width)then
-			transition.to( target, { x=defaultX, y=defaultY, time=200 } )
+		if(target == startingTarget)then
+			eventTimeEnd = event.time - eventTimeStart
+			local minutes = math.floor( eventTimeEnd / 6000 )
+			local seconds = math.floor( eventTimeEnd / 1000 )
+    		local miliseconds = eventTimeEnd % 1000 
+    		eventTimeEnd = string.format( "%02d:%02d:%02d", minutes, seconds, miliseconds ) --time format
+    		globalObject = target.name
+    		globalTarget = selectedBasket["name"]
+			local insertActivity = [[ INSERT INTO activity VALUES( NULL, "]]..globalObject..[[", 
+			"]]..globalTarget..[[", "]]..date..[[", "]]..eventTimeEnd..[[" ); ]]
+			db:exec( insertActivity )
+			-- for row in db:nrows("SELECT * FROM activity") do -- testing DB output
+			--     print( "row id: "..row.id )
+			--     print( "object: "..row._object )
+			--     print( "target: "..row._target )
+			--     print( "time: "..row._date )
+			--     print( "time: "..row._time )
+			-- end
+			if( target.width == sWidth
+			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150 } ) end
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
@@ -653,15 +673,27 @@ function scene:show( event )
 
 	if(phase == "will")then
 		--DB implementation when scene is gonna show
-		--local testing = [[ DROP TABLE IF EXISTS scores;]] --WARNING!! Disable on production. Will drop the table on scene refresh
+		--local testing = [[ DROP TABLE IF EXISTS scores; ]] --WARNING!! Disable on production. Will drop the table on scene refresh
+		--local testing2 = [[ DROP TABLE IF EXISTS activity; ]]
 		local createTable = [[
 		CREATE TABLE IF NOT EXISTS scores (
 		id INTEGER PRIMARY KEY, 
 		score INTEGER NOT NULL,
-		time_spend TEXT NOT NULL);
+		time_spend VARCHAR(10) NOT NULL,
+		_date VARCHAR(15) NOT NULL);
 		]] --query
+		local createActivity = [[
+		CREATE TABLE IF NOT EXISTS activity(
+		id INTEGER PRIMARY KEY,
+		_object VARCHAR(50) NOT NULL,
+		_target VARCHAR(50) NOT NULL,
+		_date VARCHAR(15) NOT NULL,
+		_time VARCHAR(15) NOT NULL);
+		]]
 		--db:exec( testing ) 		--DISABLE!!
 		db:exec( createTable )	--executing table creation query
+		--db:exec( testing2 )
+		db:exec( createActivity )
 	elseif(phase == "did")then
 		currentTime = timer.performWithDelay( 1000, timeCounter, timeSpend )
 		date = os.date( "%m/%d/%Y" ) 

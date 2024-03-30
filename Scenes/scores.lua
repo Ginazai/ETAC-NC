@@ -46,6 +46,20 @@ local function createReport()
 		end
 		composer.showOverlay( "Scenes.Overlay.report_notification" )
 	end
+	local path2 = system.pathForFile( "activity_report.csv", system.DocumentsDirectory )
+	local file2 = io.open( path2, "w" )
+	local i = 1 
+	if( file2 ~= nil )then
+		for dt in db:nrows("SELECT * FROM activity") do
+			if( i == 1 )then
+				file2:write( "Date, Time spend, Object, Target \n" )
+			end
+			file2:write( dt._date .. ", " .. dt._time .. ", " 
+			.. dt._object .. ", " .. dt._target .. "\n")
+			i = i + 1
+		end
+		composer.showOverlay( "Scenes.Overlay.report_notification" )
+	end
 end
 --Create table view for scores
 local function onRowRender( event )

@@ -1,5 +1,5 @@
 -----------------------------------------
--- Categorize Level 1
+-- Categorize Level 2
 -----------------------------------------
 --file resources
 --system.activate( "multitouch" ) --(not needed)
@@ -34,10 +34,6 @@ local timeSpend = 0 --initial time
 local selectedBasket = {} --for basket selection (logic is not scalable, should be rethink)
 local mainSheet = nil
 local secondarySheet = nil
-
-local globalObject = nil 
-local globalTarget = nil 
-local eventTimeEnd = nil
 -----------------------------------------
 -- Sheets
 -----------------------------------------
@@ -421,7 +417,7 @@ local function victory() --victory handler (implement configuration above)
 	modalVictory.params.timeSpend = timeSpend --passed the time at the moment of the call to ignore the time that the
 											  --overlay last
 	modalVictory.params.background = selectedBackground
-	composer.showOverlay( "Scenes.Overlay.categorize_1_win", modalVictory )
+	composer.showOverlay( "Scenes.Overlay.categorize_2_win", modalVictory )
 end
 --timer
 local function timeCounter( event )
@@ -442,31 +438,31 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 	if ( phase == "began" )then
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
-			--transition.from( objt2, { width=50, height=50, time=0 } )
-			transition.to( objt2, { width=0, height=0, time=150 } )
+			transition.from( objt2, { width=50, height=50, time=0 } )
+			transition.to( objt2, { width=0, height=0, time=200 } )
+			print( json.prettify(selectedBasket) )
+			print( "object 1: " .. objt1.name )
+			print( "object 2: " .. objt2.name )
 			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
 			if( score == expectedScore )then --victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
-			--transition.from( objt1, { width=50, height=50, time=0 } )
-			transition.to( objt1, { width=0, height=0, time=150 } )
+			transition.from( objt1, { width=50, height=50, time=0 } )
+			transition.to( objt1, { width=0, height=0, time=200 } )
+			print( json.prettify(selectedBasket) )
+			print( "object 2: " .. objt2.name )
+			print( "object 1: " .. objt1.name )
 			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
 			if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt1.name == category and objt2.name ~= name or 
 			objt2.name == category and objt1.name ~= name)then
 			playError = audio.play( errorSound )
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
 		end
 	end
 	if( phase == "ended" )then --check the objects colliding when the collision ends (removed. not needed)
@@ -484,17 +480,15 @@ end
 local function dragItem( event ) --drag: touch detector + collision detector
 	local target = event.target
 	local id = event.id
-	local phase = event.phase
-
-	if (phase == "began")then --transforming positions
+	local phase = event.phase	
+	
+	if (phase == "began")then --transforming positions	
 		startingTarget = event.target --for overlaping of events prevention 
 									--since Solar2d doesn't end the event when
 									--switching too fast within targets
-
-		eventTimeStart = event.time
-
+									
 		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
-		sHeight = startingTarget.height
+
 		event.target.alpha = 0.8 --change transparency on touc
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		--calculate difference within event and object axis
@@ -505,34 +499,16 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		defaultY = target.y
 	elseif (phase == "moved") then
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
-		if(target.touchOffsetX ~= nil and 
-			target == startingTarget)then 								--"startingTarget" is saved at the 
+		if(target.touchOffsetX ~= nil and target == startingTarget
+		and sWidth == target.width)then 								--"startingTarget" is saved at the 
 			target.x = event.x - target.touchOffsetX					--beggining of the function while
 			target.y = event.y - target.touchOffsetY					--the "event.target" can vary due 
 		end 															--to conflict with times causing 
 	elseif (phase == "ended" or phase == "cancelled") then				--undesired effects
 		event.target.alpha = 1
 		--reset the initial target position
-		if(target == startingTarget)then
-			eventTimeEnd = event.time - eventTimeStart
-			local minutes = math.floor( eventTimeEnd / 6000 )
-			local seconds = math.floor( eventTimeEnd / 1000 )
-    		local miliseconds = eventTimeEnd % 1000 
-    		eventTimeEnd = string.format( "%02d:%02d:%02d", minutes, seconds, miliseconds ) --time format
-    		globalObject = target.name
-    		globalTarget = selectedBasket["name"]
-			local insertActivity = [[ INSERT INTO activity VALUES( NULL, "]]..globalObject..[[", 
-			"]]..globalTarget..[[", "]]..date..[[", "]]..eventTimeEnd..[[" ); ]]
-			db:exec( insertActivity )
-			-- for row in db:nrows("SELECT * FROM activity") do -- testing DB output
-			--     print( "row id: "..row.id )
-			--     print( "object: "..row._object )
-			--     print( "target: "..row._target )
-			--     print( "time: "..row._date )
-			--     print( "time: "..row._time )
-			-- end
-			if( target.width == sWidth
-			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150 } ) end
+		if(target == startingTarget and sWidth == target.width)then
+			transition.to( target, { x=defaultX, y=defaultY, time=200 } )
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end
@@ -571,9 +547,12 @@ local function spawnRow( group, rowX, rowY )
 			
 		end
 	end
+
+	print( json.prettify( selectedSheets ) )
 	local group = group
 	local initX = rowX
 	local rowY = rowY
+
 	for i = 1, 5 do
 		local typeSelector = math.random( 1, 2 )	--random selectors for spawming
 		local objectSelector = math.random( 1, 10 )
@@ -581,50 +560,45 @@ local function spawnRow( group, rowX, rowY )
 		local frame = display.newImageRect( group, selectedSheets[typeSelector], objectSelector, 50, 50 )
 		frame.alpha = 0
 		if(selectedSheets[typeSelector] == foodSheet)then		--Assigning names to each element within
-			frame.name = "food"							--the loop for categorizing them
-			if not( selectedBasket["name"] and mainSheet == foodSheet)then
-				selectedBasket = {						--basket partially random selector 
-					name = "foodBasket",
-					src = "Assets/Food/food-basket.png",
-					text = "Food"
-				}
-			end		
+			frame.name = "food"	
+			selectedBasket = {}						--the loop for categorizing them
+			selectedBasket = {						--basket partially random selector 
+				name = "foodBasket",
+				src = "Assets/Food/food-basket.png",
+				text = "Food"
+			}	
 		elseif(selectedSheets[typeSelector] == animalSheet)then
 			frame.name = "animal"
-			if not( selectedBasket["name"] and mainSheet == animalSheet )then
-				selectedBasket = {						--basket partially random selector 
-					name = "animalBasket",
-					src = "Assets/Animals/animals-basket.png",
-					text = "Animals"
-				}
-			end	
+			selectedBasket = {}
+			selectedBasket = {						--basket partially random selector 
+				name = "animalBasket",
+				src = "Assets/Animals/animals-basket.png",
+				text = "Animals"
+			}
 		elseif(selectedSheets[typeSelector] == clothesSheet)then
 			frame.name = "cloth"
-			if not( selectedBasket["name"] and mainSheet == clothesSheet )then
-				selectedBasket = {						--basket partially random selector 
-					name = "clothesBasket",
-					src = "Assets/Clothes/clothes-basket.png",
-					text = "Clothes"
-				}
-			end
+			selectedBasket = {}
+			selectedBasket = {						--basket partially random selector 
+				name = "clothesBasket",
+				src = "Assets/Clothes/clothes-basket.png",
+				text = "Clothes"
+			}
 		elseif(selectedSheets[typeSelector] == plantsSheet)then
 			frame.name = "plant"
-			if not( selectedBasket["name"] and mainSheet == plantsSheet )then
-				selectedBasket = {						--basket partially random selector 
-					name = "plantsBasket",
-					src = "Assets/Plants/plants-basket.png",
-					text = "Plants"
-				}
-			end	
+			selectedBasket = {}
+			selectedBasket = {						--basket partially random selector 
+				name = "plantsBasket",
+				src = "Assets/Plants/plants-basket.png",
+				text = "Plants"
+			}
 		elseif(selectedSheets[typeSelector] == vehiclesSheet)then
 			frame.name = "vehicle"
-			if not( selectedBasket["name"] and mainSheet == vehiclesSheet )then
-				selectedBasket = {						--basket partially random selector 
-					name = "vehiclesBasket",
-					src = "Assets/Vehicles/vehicles-basket.png",
-					text = "Vehicles"
-				}
-			end
+			selectedBasket = {}
+			selectedBasket = {						--basket partially random selector 
+				name = "vehiclesBasket",
+				src = "Assets/Vehicles/vehicles-basket.png",
+				text = "Vehicles"
+			}
 		end
 		frame.x = initX 
 		frame.y = rowY
@@ -639,7 +613,6 @@ local function spawnRow( group, rowX, rowY )
 end
 local function respawn( group ) --for repawming elements 
 	playRewind = audio.play( rewindSound )
-	--selectedSheets = {}
 
 	local group = group
 	local elem_amount = group.numChildren
@@ -666,7 +639,7 @@ local function respawn( group ) --for repawming elements
 	basket.name = selectedBasket["name"]
 	basket.x = 475
 	basket.y = 260
-	physics.addBody( basket, "static", { radius=0.8, outline=box_outline } ) --physics box
+	physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 	--print( json.prettify( selectedBasket ) )
 end
 -----------------------------------------
@@ -674,124 +647,106 @@ end
 -----------------------------------------
 local backgroundSet = { "Assets/Background/kinder.png", "Assets/Background/kitchen.png", "Assets/Background/jungle.png",
 "Assets/Background/living.png", "Assets/Background/bedroom.png", } --random background list for random selection
---create()
-function scene:create( event )
-	currentTime = timer.performWithDelay( 1000, timeCounter, timeSpend )
-	date = os.date( "%m/%d/%Y" ) 
-	local sceneGroup = self.view 		--scene view
-	local physics = require( "physics" ) --implementing physics
-	physics.start()
-	physics.setGravity( 0,0 )
-	local backGroup = display.newGroup() -- background elements group
-	sceneGroup:insert( backGroup ) 
-	local mainGroup = display.newGroup() -- game objects group
-	sceneGroup:insert( mainGroup ) 
-	local categoriesGroup = display.newGroup() --for spawm objects
-	sceneGroup:insert( categoriesGroup )
-	local uiGroup = display.newGroup() 	-- UI elements group
-	sceneGroup:insert( uiGroup ) 
-
-
-	local selectedBg = math.random( 1,5 )
-	selectedBackground = backgroundSet[selectedBg]
-	background = display.newImageRect( backGroup, selectedBackground, 700, 375 ) --background
-	--applying blur to background
-	background.fill.effect = 'filter.blurGaussian'
-	background.fill.effect.horizontal.blurSize = 10
-	background.fill.effect.horizontal.sigma = 150
-	background.fill.effect.vertical.blurSize = 10
-	background.fill.effect.vertical.sigma = 150
-	
-	background.x = display.contentCenterX
-	background.y = display.contentCenterY
-	--Score Text
-	scoreText = display.newText( uiGroup, "", display.contentCenterX, 20, native.systemFont, 15 )
-	scoreText:setFillColor( 0,0,0 )	
-	--Back Button
-	backButton = display.newImageRect( uiGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
-	backButton.x = 0
-	backButton.y = 16
-
-	local secondBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 515, 325 )
-	secondBoard.x = 160
-	secondBoard.y = 200
-
-	-- transition.from( secondBoard, { y=400 } )
-	-- transition.to( secondBoard, { y=200 } )
-
-	local basketBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 250, 150 )
-	basketBoard.x = 475
-	basketBoard.y = 260
-
-	local textBox = display.newImageRect( categoriesGroup, "Assets/Background/text-box.png", 200, 100 )
-	textBox.x = 475
-	textBox.y = 100
-
-	spawnRow( categoriesGroup, 35, 110 )
-	spawnRow( categoriesGroup, 35, 185 )
-	spawnRow( categoriesGroup, 35, 260 )
-
-	-- transition.from( textCategory, { alpha=0, size=0 } )
-	-- transition.to( textCategory, { alpha=1, size=35, time=500 } )
-
-	local function respawnRow( event )
-		respawn( categoriesGroup )
-	end
-
-	local textCategory = display.newText( categoriesGroup, selectedBasket["text"], 475, 110, "Fonts/FORTE.TTF", 35 )
-	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
-	textCategory:setTextColor( 1, 0.85, 0.31  )
-
-	local basket = display.newImageRect( categoriesGroup, selectedBasket["src"], 200, 100 )
-	basket.name = selectedBasket["name"]
-	basket.x = 475
-	basket.y = 260
-	physics.addBody( basket, "static", { radius=0.8, outline=box_outline } ) --physics box
-
-	transition.from( basket, { height=200, width=20, alpha=0, delay=700 } )
-	transition.to( basket, { height=100, width=200, alpha=1, time=600, delay=650 } )
-
-	local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
-	respawnButton.x = 545
-	respawnButton.y = 16
-
-	respawnButton:addEventListener( "tap", respawnRow )
-	Runtime:addEventListener( "collision", collisionWithin )
-	backButton:addEventListener( "tap", pauseMenu )
-end
 --show()
 function scene:show( event )
 	local phase = event.phase
 
 	if(phase == "will")then
 		--DB implementation when scene is gonna show
-		local testing = [[ DROP TABLE IF EXISTS scores; ]] --WARNING!! Disable on production. Will drop the table on scene refresh
-		local testing2 = [[ DROP TABLE IF EXISTS activity; ]]
+		--local testing = [[ DROP TABLE IF EXISTS scores;]] --WARNING!! Disable on production. Will drop the table on scene refresh
 		local createTable = [[
 		CREATE TABLE IF NOT EXISTS scores (
 		id INTEGER PRIMARY KEY, 
 		score INTEGER NOT NULL,
-		time_spend VARCHAR(10) NOT NULL,
-		_date VARCHAR(15) NOT NULL);
+		time_spend TEXT NOT NULL);
 		]] --query
-		local createActivity = [[
-		CREATE TABLE IF NOT EXISTS activity(
-		id INTEGER PRIMARY KEY,
-		_object VARCHAR(50) NOT NULL,
-		_target VARCHAR(50) NOT NULL,
-		_date VARCHAR(15) NOT NULL,
-		_time VARCHAR(15) NOT NULL);
-		]]
-		db:exec( testing ) 		--DISABLE!!
+		--db:exec( testing ) 		--DISABLE!!
 		db:exec( createTable )	--executing table creation query
-		db:exec( testing2 )
-		db:exec( createActivity )
 	elseif(phase == "did")then
+		currentTime = timer.performWithDelay( 1000, timeCounter, timeSpend )
+		date = os.date( "%m/%d/%Y" ) 
+		local sceneGroup = self.view 		--scene view
+		local physics = require( "physics" ) --implementing physics
+		physics.start()
+		print( "physics should have been called. on scene creation" )
+		physics.setGravity( 0,0 )
+		local backGroup = display.newGroup() -- background elements group
+		sceneGroup:insert( backGroup ) 
+		local mainGroup = display.newGroup() -- game objects group
+		sceneGroup:insert( mainGroup ) 
+		local categoriesGroup = display.newGroup() --for spawm objects
+		sceneGroup:insert( categoriesGroup )
+		local uiGroup = display.newGroup() 	-- UI elements group
+		sceneGroup:insert( uiGroup ) 
+
+
+		local selectedBg = math.random( 1,5 )
+		selectedBackground = backgroundSet[selectedBg]
+		background = display.newImageRect( backGroup, selectedBackground, 700, 375 ) --background
+		--applying blur to background
+		background.fill.effect = 'filter.blurGaussian'
+		background.fill.effect.horizontal.blurSize = 10
+		background.fill.effect.horizontal.sigma = 150
+		background.fill.effect.vertical.blurSize = 10
+		background.fill.effect.vertical.sigma = 150
+		
+		background.x = display.contentCenterX
+		background.y = display.contentCenterY
+		--Score Text
+		scoreText = display.newText( uiGroup, "", display.contentCenterX, 20, native.systemFont, 15 )
+		scoreText:setFillColor( 0,0,0 )	
+		--Back Button
+		backButton = display.newImageRect( uiGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
+		backButton.x = 0
+		backButton.y = 16
+
+		local secondBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 515, 325 )
+		secondBoard.x = 160
+		secondBoard.y = 200
+
+		-- transition.from( secondBoard, { y=400 } )
+		-- transition.to( secondBoard, { y=200 } )
+
+		local basketBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", 250, 150 )
+		basketBoard.x = 475
+		basketBoard.y = 260
+
+		local textBox = display.newImageRect( categoriesGroup, "Assets/Background/text-box.png", 200, 100 )
+		textBox.x = 475
+		textBox.y = 100
+
+		spawnRow( categoriesGroup, 35, 110 )
+		spawnRow( categoriesGroup, 35, 185 )
+		spawnRow( categoriesGroup, 35, 260 )
+
+		-- transition.from( textCategory, { alpha=0, size=0 } )
+		-- transition.to( textCategory, { alpha=1, size=35, time=500 } )
+
+		local function respawnRow( event )
+			respawn( categoriesGroup )
+		end
+
+		local textCategory = display.newText( categoriesGroup, selectedBasket["text"], 475, 110, "Fonts/FORTE.TTF", 35 )
+		textCategory.font = native.newFont( "Fonts.FORTE", 16 )
+		textCategory:setTextColor( 1, 0.85, 0.31  )
+
+		local basket = display.newImageRect( categoriesGroup, selectedBasket["src"], 200, 100 )
+		basket.name = selectedBasket["name"]
+		basket.x = 475
+		basket.y = 260
+		physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
+
+		transition.from( basket, { height=200, width=20, alpha=0, delay=700 } )
+		transition.to( basket, { height=100, width=200, alpha=1, time=600, delay=650 } )
+
+		local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
+		respawnButton.x = 545
+		respawnButton.y = 16
+
+		respawnButton:addEventListener( "tap", respawnRow )
+		Runtime:addEventListener( "collision", collisionWithin )
+		backButton:addEventListener( "tap", pauseMenu )
 	end
-end
---relaunch()
-function scene:reLaunch( event ) --to keep timer continuity
- timeSpend = modalVictory.params.timeSpend
 end
 --hide()
 function scene:hide( event )
@@ -801,32 +756,32 @@ function scene:hide( event )
 	if (phase == "will") then
 		timer.cancel( currentTime ) --stop time counter
 	elseif (phase == "did") then
-		print( "level 1 hiden" )
+		print( "level 2 hiden" )
 		--inserting into DB 
 		if( saveTime ~= nil)then
 			local insertToDb = [[INSERT INTO scores VALUES ( NULL, "]]..score..[[", "]]..saveTime..[[", "]]..date..[[" );]]
 			db:exec( insertToDb )
-			-- for row in db:nrows("SELECT * FROM scores") do -- testing DB output
-			--     print( "row id: "..row.id )
-			--     print( "score: "..row.score )
-			--     print( "total time: "..row.time_spend )
-			--     print( "date: "..row._date )
-			-- end
+			for row in db:nrows("SELECT * FROM scores") do -- testing DB output
+			    print( "row id: "..row.id )
+			    print( "score: "..row.score )
+			    print( "total time: "..row.time_spend )
+			    print( "date: "..row._date )
+			end
 		end
+		db:close() --close DB
+		physics.stop() -- stopping physics when scene stops
+		Runtime:removeEventListener( "tap", gotoPlayMenu ) 	--Go Back button listener
+		Runtime:removeEventListener( "collision", collisionWithin ) -- Remove collision event listener
 		--deleting audio files
 		if (dropPlay ~= nil)then audio.stop( dropPlay ) end
 		if (playRewind ~= nil)then audio.stop( playRewind ) end
 		if (playChalk ~= nil)then audio.stop( playChalk ) end
-		if (playError ~= nil)then audio.stop( playError ) end
+	if (playError ~= nil)then audio.stop( playError ) end
 		playError = nil
 		dropPlay = nil
 		playRewind = nil
 		playChalk = nil
-	db:close() --close DB
-	physics.stop() -- stopping physics when scene stops
-	Runtime:removeEventListener( "tap", gotoPlayMenu ) 	--Go Back button listener
-	Runtime:removeEventListener( "collision", collisionWithin ) -- Remove collision event listener
-	composer.removeScene( "GameMode.categorize" )		--Remove scene when scene goes away
+	composer.removeScene( "GameMode.categorize_2" )		--Remove scene when scene goes away
 	end
 end
 function scene:destroy( event )
