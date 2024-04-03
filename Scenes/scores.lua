@@ -4,7 +4,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local sqlite = require( "sqlite3" ) --for data through DB
-local json = require( "json" ) --for data through DB
+local json = require( "json" ) 
 local widget = require( "widget" ) --For scrollview widget
 --init varibales 
 local background
