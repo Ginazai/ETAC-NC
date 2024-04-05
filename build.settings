@@ -21,6 +21,8 @@ settings =
 		usesPermissions =
 		{
 			"android.permission.INTERNET",
+			"android.permission.ACCESS_NETWORK_STATE",
+			"android.permission.WAKE_LOCK"
 		},
 	},
 
@@ -42,7 +44,10 @@ settings =
 	--
 	plugins =
 	{
-
+		 ["plugin.openssl"] =
+        {
+            publisherId = "com.coronalabs",
+        },
 	},
 
 	--
@@ -51,7 +56,7 @@ settings =
 	excludeFiles =
 	{
 		-- Exclude unnecessary files for each platform
-		all = { "Icon.png", "Icon-*dpi.png", "Images.xcassets", },
-		android = { "LaunchScreen.storyboardc", },
+		all = { "Icon.png", "Icon-*dpi.png", "Images.xcassets", }
+		--android = { "LaunchScreen.storyboardc", },
 	},
 }
