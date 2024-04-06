@@ -530,7 +530,10 @@ local function dragItem( event ) --drag: touch detector + collision detector
 			target.x = event.x - target.touchOffsetX					--beggining of the function while
 			target.y = event.y - target.touchOffsetY					--the "event.target" can vary due 
 		end 															--to conflict with times causing 
-	elseif (phase == "ended" or phase == "cancelled") then				--undesired effects
+		if( target.height ~= sHeight or target.width ~= sWidth )then	--undesired effects
+			display.getCurrentStage():setFocus(  target, nil )
+		end
+	elseif (phase == "ended" or phase == "cancelled") then				
 		event.target.alpha = 1
 		--reset the initial target position
 		if(target == startingTarget)then
@@ -552,7 +555,11 @@ local function dragItem( event ) --drag: touch detector + collision detector
 			--     print( "time: "..row._time )
 			-- end
 			if( target.width == sWidth
-			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150 } ) end
+			and target.height == sHeight)then 
+				transition.to( target, { x=defaultX, y=defaultY, time=150 } ) 
+			else
+				display.getCurrentStage():setFocus(  target, nil )
+			end
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end

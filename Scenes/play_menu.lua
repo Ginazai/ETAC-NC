@@ -44,33 +44,29 @@ function scene:create( event )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
 
+	local textBox = display.newImageRect( sceneGroup, "Assets/Background/text-box.png", 275, 100 )
+	textBox.x = display.contentCenterX
+	textBox.y = 60
+
+	local textCategory = display.newText( sceneGroup, "Game Modes", display.contentCenterX, 65, "Fonts/FORTE.TTF", 35 )
+	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
+	textCategory:setTextColor( 1, 0.85, 0.31 )
+
 	local firstBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
 	firstBoard.x = display.contentCenterX - 105
-	firstBoard.y = 85
+	firstBoard.y = display.contentCenterY + 40
 
 	local secondBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
 	secondBoard.x = display.contentCenterX + 105
-	secondBoard.y = 85
-
-	local thirdBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
-	thirdBoard.x = display.contentCenterX - 105
-	thirdBoard.y = 235
-
-	local fourthBoard = display.newImageRect( sceneGroup, "Assets/Background/board-2.png", 240, 140 )
-	fourthBoard.x = display.contentCenterX + 105
-	fourthBoard.y = 235
+	secondBoard.y = display.contentCenterY + 40
 
 	option1 = display.newImageRect( sceneGroup, "Assets/Buttons/libre.png", 100, 125 )
 	option1.x = 135
-	option1.y = 90
+	option1.y = display.contentCenterY + 45
 
 	option2 = display.newImageRect( sceneGroup, "Assets/Buttons/categorizar.png", 100, 125 )
 	option2.x = 345
-	option2.y = 90
-
-	option3 = display.newImageRect( sceneGroup, "Assets/Buttons/seleccion.png", 175, 120 )
-	option3.x = 345
-	option3.y = 235
+	option2.y = display.contentCenterY + 45
 	
 	backButton = display.newImageRect( sceneGroup, "Assets/Buttons/back.png", 50, 25 )
 	backButton.x = 0
@@ -78,7 +74,6 @@ function scene:create( event )
 
 	option1:addEventListener( "tap", gotoFree )
 	option2:addEventListener( "tap", gotoCategorize )
-	option3:addEventListener( "tap", gotoSelect )
 	backButton:addEventListener( "tap", gotoMenu )
 end
 function scene:hide( event )
