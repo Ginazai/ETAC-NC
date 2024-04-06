@@ -54,7 +54,7 @@ local fSheet =
 		{ --frame 2
 			x = 296,
 			y = 0,
-			width = 295,
+			width = 290,
 			height = 293
 		},
 		{ --frame 3
@@ -100,9 +100,9 @@ local fSheet =
 			height = 293
 		},
 		{ --frame 10
-			x = 2636,
+			x = 2638,
 			y = 0,
-			width = 295,
+			width = 293,
 			height = 293
 		}
 	},
@@ -180,7 +180,7 @@ local aSheet =
 	sheetContentHeight = 293
 }
 local cSheet = 	
-{	--Animals sheet frames
+{	--Clothes sheet frames
 	frames = 
 	{
 		{ --frame 1
@@ -193,7 +193,7 @@ local cSheet =
 			x = 296,
 			y = 0,
 			width = 292,
-			height = 293
+			height = 193
 		},
 		{ --frame 3
 			x = 591,
@@ -223,13 +223,13 @@ local cSheet =
 			x = 1759,
 			y = 0,
 			width = 290,
-			height = 250
+			height = 244
 		},
 		{ --frame 8
 			x = 2049,
 			y = 0,
-			width = 292,
-			height = 293
+			width = 289,
+			height = 246
 		},
 		{ --frame 9
 			x = 2343,
@@ -249,7 +249,7 @@ local cSheet =
 	sheetContentHeight = 244
 }
 local pSheet = 	
-{	--Animals sheet frames
+{	--Plants sheet frames
 	frames = 
 	{
 		{ --frame 1
@@ -318,7 +318,7 @@ local pSheet =
 	sheetContentHeight = 293
 }
 local vSheet = 	
-{	--Animals sheet frames
+{	--Vehicles sheet frames
 	frames = 
 	{
 		{ --frame 1
@@ -336,7 +336,7 @@ local vSheet =
 		{ --frame 3
 			x = 591,
 			y = 0,
-			width = 291,
+			width = 288,
 			height = 293
 		},
 		{ --frame 4
@@ -398,6 +398,26 @@ vehiclesSheet = graphics.newImageSheet( "Assets/Vehicles/vehicles-sheet.png", vS
 local function gotoPlayMenu() --go back to previous screen (play menu)
 	playChalk = audio.play( chalkSound )
 	composer.gotoScene( "Scenes.play_menu", { time=500, effect="slideRight" } )
+end
+--listen name of the category 
+local function instructions()
+	print( globalTarget )
+	if( selectedBasket.name == "foodBasket" )then
+		local instructionsSound = audio.loadSound( "Audio/voice/insert_food.wav" )
+		local playInstructions = audio.play( instructionsSound )
+	elseif( selectedBasket.name == "animalBasket" )then
+		local instructionsSound = audio.loadSound( "Audio/voice/get_animals.wav" )
+		local playInstructions = audio.play( instructionsSound )
+	elseif( selectedBasket.name == "vehiclesBasket" )then
+		local instructionsSound = audio.loadSound( "Audio/voice/which_are_vehicles.wav" )
+		local playInstructions = audio.play( instructionsSound )
+	elseif( selectedBasket.name == "clothesBasket" )then
+		local instructionsSound = audio.loadSound( "Audio/voice/put_clothes.wav" )
+		local playInstructions = audio.play( instructionsSound )
+	elseif( selectedBasket.name == "plantsBasket" )then
+		local instructionsSound = audio.loadSound( "Audio/voice/put_plants.wav" )
+		local playInstructions = audio.play( instructionsSound )
+	end
 end
 --pause menu handler
 local modalOptions = { --pause menu configuration
@@ -755,6 +775,11 @@ function scene:create( event )
 	respawnButton.x = 545
 	respawnButton.y = 16
 
+	local questionButton = display.newImageRect( uiGroup, "Assets/Buttons/question.png", 65, 33 )
+	questionButton.x = 475
+	questionButton.y = 73
+
+	questionButton:addEventListener( "tap", instructions )
 	respawnButton:addEventListener( "tap", respawnRow )
 	Runtime:addEventListener( "collision", collisionWithin )
 	backButton:addEventListener( "tap", pauseMenu )
@@ -787,6 +812,7 @@ function scene:show( event )
 		db:exec( testing2 )
 		db:exec( createActivity )
 	elseif(phase == "did")then
+		instructions()
 	end
 end
 --relaunch()
