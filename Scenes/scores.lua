@@ -38,13 +38,13 @@ local function createReport()
 		playMagic = audio.play( magicSound )
 		for data in db:nrows("SELECT * FROM scores") do
 			if( i == 1 )then
-				file:write( "Date, Time spend, Total score \n" )
+				file:write( "Date, Total time spend, Total score \n" )
 			end
 			file:write( data._date .. ", " 
 			.. data.time_spend .. ", " .. data.score .. "\n")
 			i = i + 1
 		end
-		composer.showOverlay( "Scenes.Overlay.report_notification" )
+		io.close( file )
 	end
 	local path2 = system.pathForFile( "activity_report.csv", system.DocumentsDirectory )
 	local file2 = io.open( path2, "w" )
@@ -52,12 +52,13 @@ local function createReport()
 	if( file2 ~= nil )then
 		for dt in db:nrows("SELECT * FROM activity") do
 			if( i == 1 )then
-				file2:write( "Date, Time spend, Object, Target \n" )
+				file2:write( "Date, Time spend (mm:ss), Object, Target \n" )
 			end
 			file2:write( dt._date .. ", " .. dt._time .. ", " 
 			.. dt._object .. ", " .. dt._target .. "\n")
 			i = i + 1
 		end
+		io.close( file2 )
 		composer.showOverlay( "Scenes.Overlay.report_notification" )
 	end
 end
@@ -168,7 +169,6 @@ function scene:hide( event )
 		if (playMagic ~= nil)then audio.stop( playMagic ) end
 		playMagic = nil
 		db:close()
-		if(file~=nil)then io.close( file ) end
 		composer.removeScene( "Scenes.scores" )
 	end
 end

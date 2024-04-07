@@ -15,13 +15,16 @@ local playChalk = nil
 local playSound = audio.loadSound( "Audio/magic-2.mp3" )
 local playButtonSound = nil
 --functions
+local function audioPlayer()
+	activeVoice("Audio/voice/level_1_finish.wav")
+end
 local function onExit() --exiting menu handler
 	playChalk = audio.play( chalkSound )
 	composer.gotoScene( "Scenes.play_menu", { time=100, effect="slideUp" } )
 end
 local function onContinue() --continue menu handler 
 	playButtonSound = audio.play( playSound )
-	composer.gotoScene( "GameMode.categorize_2", { effect="zoomOutInFade", time=300 } )
+	composer.gotoScene( "GameMode.categorize_2", { time=300, effect="zoomInOutFade" } )
 end
 -----------------------------------------
 -- Scenes
@@ -86,10 +89,10 @@ end
 function scene:show( event )
 	local sceneGroup = self.view 
 	local phase = event.phase
-	local parent  = event.parent
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
+		timer.performWithDelay( 900, audioPlayer )
 	end
 end
 --hide()

@@ -53,6 +53,7 @@ function scene:show( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
+		activeVoice("Audio/voice/exit.wav")
 	end
 end
 function scene:hide( event )
@@ -62,6 +63,9 @@ function scene:hide( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
+		if (playQuestion ~= nil)then audio.stop( playQuestion ) end
+		playQuestion = nil
+		composer.hideOverlay("Scenes.Overlay.pause_menu")
 	end
 end
 

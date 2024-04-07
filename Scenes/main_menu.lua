@@ -9,21 +9,17 @@ local board
 local logo
 local playButton
 local scoreButton
---sounds
-local backgroundOptions = 
-{
-	loops = -1,
-	onComplete = callbackListener
-}
-local backgroundSound = audio.loadSound( "Audio/background.mp3" )
-audio.play( backgroundSound, backgroundOptions )
 
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
 --buttons events
 local function gotoPlay()
 	chalkButton = audio.play( chalkSound )
-	composer.gotoScene( "Scenes.play_menu", { time=700, effect="slideLeft" } )
+	local play_options = {
+		time=700, 
+		effect="slideLeft"
+	}
+	composer.gotoScene( "Scenes.play_menu", play_options )
 end
 local function gotoScore()
 	chalkButton = audio.play( chalkSound )
@@ -40,7 +36,7 @@ function scene:create( event )
 		urgency = "Critical",
 		rationaleTitle = "Storage permission required"
 	}
-	native.showPopup( "requestAppPermission", "Storage" )
+	native.showPopup( "requestAppPermission", permissionOptions )
 
 	background = display.newImageRect( sceneGroup, "Assets/Background/main.png", 900, 520 )
 	background.x = display.contentCenterX

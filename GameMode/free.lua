@@ -401,22 +401,16 @@ local function gotoPlayMenu() --go back to previous screen (play menu)
 end
 --listen name of the category 
 local function instructions()
-	print( globalTarget )
 	if( selectedBasket.name == "foodBasket" )then
-		local instructionsSound = audio.loadSound( "Audio/voice/insert_food.wav" )
-		local playInstructions = audio.play( instructionsSound )
+		return "Audio/voice/insert_food.wav"
 	elseif( selectedBasket.name == "animalBasket" )then
-		local instructionsSound = audio.loadSound( "Audio/voice/get_animals.wav" )
-		local playInstructions = audio.play( instructionsSound )
+		return "Audio/voice/get_animals.wav"
 	elseif( selectedBasket.name == "vehiclesBasket" )then
-		local instructionsSound = audio.loadSound( "Audio/voice/which_are_vehicles.wav" )
-		local playInstructions = audio.play( instructionsSound )
+		return "Audio/voice/which_are_vehicles.wav"
 	elseif( selectedBasket.name == "clothesBasket" )then
-		local instructionsSound = audio.loadSound( "Audio/voice/put_clothes.wav" )
-		local playInstructions = audio.play( instructionsSound )
+		return "Audio/voice/put_clothes.wav"
 	elseif( selectedBasket.name == "plantsBasket" )then
-		local instructionsSound = audio.loadSound( "Audio/voice/put_plants.wav" )
-		local playInstructions = audio.play( instructionsSound )
+		return "Audio/voice/put_plants.wav"
 	end
 end
 --pause menu handler
@@ -443,6 +437,10 @@ local function victory() --victory handler (implement configuration above)
 	modalVictory.params.background = selectedBackground
 	composer.showOverlay( "Scenes.Overlay.categorize_1_win", modalVictory )
 end
+--ask instrutions
+local function askInstructions()
+	activeVoice(instructions())
+end
 --timer
 local function timeCounter( event )
 	timeSpend = timeSpend + 1
@@ -463,30 +461,27 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
 			--transition.from( objt2, { width=50, height=50, time=0 } )
-			transition.to( objt2, { width=0, height=0, time=150 } )
-			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
+			transition.to( objt2, { width=0, height=0, time=125 } )
+			if(objt2.width == 0 or objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
-			-- if( score == expectedScore )then --victory detector (expecting a score of 25 points)
-			-- 	victory() --invoque victory() function declared above
-			-- end
+			if( score == expectedScore )then --victory detector (expecting a score of 25 points)
+				victory() --invoque victory() function declared above
+			end
+			attempted = true
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
 			--transition.from( objt1, { width=50, height=50, time=0 } )
-			transition.to( objt1, { width=0, height=0, time=150 } )
-			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
+			transition.to( objt1, { width=0, height=0, time=125 } )
+			if(objt1.width == 0 or objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
-			-- if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
-			-- 	victory() --invoque victory() function declared above
-			-- end
+			if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
+				victory() --invoque victory() function declared above
+			end
+			attempted = true
 		elseif(objt1.name == category and objt2.name ~= name or 
 			objt2.name == category and objt1.name ~= name)then
 			playError = audio.play( errorSound )
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
+			attempted = true
 		end
 	end
 	if( phase == "ended" )then --check the objects colliding when the collision ends (removed. not needed)
@@ -510,11 +505,12 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		startingTarget = event.target --for overlaping of events prevention 
 									--since Solar2d doesn't end the event when
 									--switching too fast within targets
-
 		eventTimeStart = event.time
+		attempted = false
 
 		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
 		sHeight = startingTarget.height
+
 		event.target.alpha = 0.8 --change transparency on touc
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		--calculate difference within event and object axis
@@ -526,41 +522,44 @@ local function dragItem( event ) --drag: touch detector + collision detector
 	elseif (phase == "moved") then
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		if(target.touchOffsetX ~= nil and 
-			target == startingTarget)then 								--"startingTarget" is saved at the 
+			target == startingTarget)then								--"startingTarget" is saved at the 
 			target.x = event.x - target.touchOffsetX					--beggining of the function while
-			target.y = event.y - target.touchOffsetY					--the "event.target" can vary due 
-		end 															--to conflict with times causing 
-		if( target.height ~= sHeight or target.width ~= sWidth )then	--undesired effects
-			display.getCurrentStage():setFocus(  target, nil )
-		end
+			target.y = event.y - target.touchOffsetY	
+		else															--the "event.target" can vary due
+			display.getCurrentStage():setFocus(  target, nil )			--to conflict with times causing 
+		end 															--undesired effects
 	elseif (phase == "ended" or phase == "cancelled") then				
 		event.target.alpha = 1
 		--reset the initial target position
 		if(target == startingTarget)then
 			eventTimeEnd = event.time - eventTimeStart
-			local minutes = math.floor( eventTimeEnd / 6000 )
-			local seconds = math.floor( eventTimeEnd / 1000 )
-    		local miliseconds = eventTimeEnd % 1000 
-    		eventTimeEnd = string.format( "%02d:%02d:%02d", minutes, seconds, miliseconds ) --time format
+    		--local miliseconds = math.floor( eventTimeEnd/100 ) 
+    		--print( "ms: " .. miliseconds )
+    		local totalSeconds = eventTimeEnd/60000
+    		--print( "mod: " .. totalSeconds ) 
+    		if(totalSeconds ~= nil)then
+    			totalSeconds = tostring(totalSeconds):match("%.(%d+)")
+    			totalSeconds = string.sub( totalSeconds, 1, 2 )
+    			--print( "decimals: " .. tostring(totalSeconds) ) 
+    		end
+    		local seconds = math.floor( totalSeconds*0.6 ) 
+    		--print( "sec: " .. seconds )
+    		local minutes = math.floor( eventTimeEnd/60000 )
+    		--print( "min: " .. minutes )
+    		eventTimeEnd = string.format( "%02d:%02d", minutes, seconds ) --time format
+    		print( eventTimeEnd )
     		globalObject = target.name
-    		globalTarget = selectedBasket["name"]
+    		if(attempted)then
+    			globalTarget = selectedBasket["name"]
+    		else
+    			globalTarget = "(didn't attempted to insert)"
+    		end
 			local insertActivity = [[ INSERT INTO activity VALUES( NULL, "]]..globalObject..[[", 
 			"]]..globalTarget..[[", "]]..date..[[", "]]..eventTimeEnd..[[" ); ]]
 			db:exec( insertActivity )
-			-- for row in db:nrows("SELECT * FROM activity") do -- testing DB output
-			--     print( "row id: "..row.id )
-			--     print( "object: "..row._object )
-			--     print( "target: "..row._target )
-			--     print( "time: "..row._date )
-			--     print( "time: "..row._time )
-			-- end
 			if( target.width == sWidth
-			and target.height == sHeight)then 
-				transition.to( target, { x=defaultX, y=defaultY, time=150 } ) 
-			else
-				display.getCurrentStage():setFocus(  target, nil )
-			end
-		end
+			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150, delay=50 } ) end
+		end						
 		display.getCurrentStage():setFocus(  target, nil )
 	end
 	return true -- Prevents touch propagation to underlying objects
@@ -696,7 +695,7 @@ local function respawn( group ) --for repawming elements
 	basket.y = 260
 	physics.addBody( basket, "static", { radius=0.8, outline=box_outline } ) --physics box
 	--print( json.prettify( selectedBasket ) )
-	instructions()
+	activeVoice(instructions())
 end
 -----------------------------------------
 -- Scene Handling
@@ -788,7 +787,7 @@ function scene:create( event )
 	questionButton.x = 475
 	questionButton.y = 73
 
-	questionButton:addEventListener( "tap", instructions )
+	questionButton:addEventListener( "tap", askInstructions )
 	respawnButton:addEventListener( "tap", respawnRow )
 	Runtime:addEventListener( "collision", collisionWithin )
 	backButton:addEventListener( "tap", pauseMenu )
@@ -820,8 +819,8 @@ function scene:show( event )
 		db:exec( createTable )	--executing table creation query
 		db:exec( testing2 )
 		db:exec( createActivity )
-	elseif(phase == "did")then
-		instructions()
+	elseif(phase == "did")then	
+		activeVoice( instructions() )	
 	end
 end
 --relaunch()
