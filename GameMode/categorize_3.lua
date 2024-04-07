@@ -542,7 +542,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 			--     print( "time: "..row._time )
 			-- end
 			if( target.width == sWidth
-			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150 } ) end
+			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150, delay=100 } ) end
 		end
 		display.getCurrentStage():setFocus(  target, nil )
 	end

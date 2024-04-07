@@ -10,7 +10,7 @@ settings =
 		-- Supported values for orientation:
 		-- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
 		default = "landscapeRight",
-		supported = { "landscapeRight", },
+		supported = { "landscapeRight","landscapeLeft" },
 	},
 
 	--
@@ -22,7 +22,9 @@ settings =
 		{
 			"android.permission.INTERNET",
 			"android.permission.ACCESS_NETWORK_STATE",
-			"android.permission.WAKE_LOCK"
+			"android.permission.WAKE_LOCK",
+			"android.permission-group.STORAGE",
+			"android.permission-group.PHONE"
 		},
 	},
 

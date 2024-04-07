@@ -35,6 +35,13 @@ end
 function scene:create( event )
 	local sceneGroup = self.view
 
+	local permissionOptions = {
+		appPermission = "Storage",
+		urgency = "Critical",
+		rationaleTitle = "Storage permission required"
+	}
+	native.showPopup( "requestAppPermission", "Storage" )
+
 	background = display.newImageRect( sceneGroup, "Assets/Background/main.png", 900, 520 )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY

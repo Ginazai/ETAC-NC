@@ -463,30 +463,24 @@ local function collisionOcurred( event, typeName, boxName ) --Objects collision 
 		if(objt1.name == category and objt2.name == name)then
 			dropPlay = audio.play( dropSound )
 			--transition.from( objt2, { width=50, height=50, time=0 } )
-			transition.to( objt2, { width=0, height=0, time=150 } )
-			if(objt2.width == 0 and objt2.height == 0)then display.remove( objt2 ) end
+			transition.to( objt2, { width=0, height=0, time=125 } )
+			if(objt2.width == 0 or objt2.height == 0)then display.remove( objt2 ) end
 			score = score + 1
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
 			if( score == expectedScore )then --victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt2.name == category and objt1.name == name)then
 			dropPlay = audio.play( dropSound )
 			--transition.from( objt1, { width=50, height=50, time=0 } )
-			transition.to( objt1, { width=0, height=0, time=150 } )
-			if(objt1.width == 0 and objt1.height == 0)then display.remove( objt1 ) end
+			transition.to( objt1, { width=0, height=0, time=125 } )
+			if(objt1.width == 0 or objt1.height == 0)then display.remove( objt1 ) end
 			score = score + 1
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
 			if( score == expectedScore )then ----victory detector (expecting a score of 25 points)
 				victory() --invoque victory() function declared above
 			end
 		elseif(objt1.name == category and objt2.name ~= name or 
 			objt2.name == category and objt1.name ~= name)then
 			playError = audio.play( errorSound )
-			-- print( "object1: " .. objt1.name )
-			-- print( "object2: " .. objt2.name )
 		end
 	end
 	if( phase == "ended" )then --check the objects colliding when the collision ends (removed. not needed)
@@ -510,11 +504,12 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		startingTarget = event.target --for overlaping of events prevention 
 									--since Solar2d doesn't end the event when
 									--switching too fast within targets
-
+		physics.addBody( event.target, "dynamic", { radius=50, isSensor=true } )
 		eventTimeStart = event.time
 
 		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
 		sHeight = startingTarget.height
+
 		event.target.alpha = 0.8 --change transparency on touc
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		--calculate difference within event and object axis
@@ -526,7 +521,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 	elseif (phase == "moved") then
 		display.getCurrentStage():setFocus(  target, id ) --prevent objects from overlaping
 		if(target.touchOffsetX ~= nil and 
-			target == startingTarget)then 								--"startingTarget" is saved at the 
+			target == startingTarget)then								--"startingTarget" is saved at the 
 			target.x = event.x - target.touchOffsetX					--beggining of the function while
 			target.y = event.y - target.touchOffsetY					--the "event.target" can vary due 
 		end 															--to conflict with times causing 
@@ -555,12 +550,9 @@ local function dragItem( event ) --drag: touch detector + collision detector
 			--     print( "time: "..row._time )
 			-- end
 			if( target.width == sWidth
-			and target.height == sHeight)then 
-				transition.to( target, { x=defaultX, y=defaultY, time=150 } ) 
-			else
-				display.getCurrentStage():setFocus(  target, nil )
-			end
-		end
+			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150 } ) end
+		end						
+		physics.removeBody( event.target )
 		display.getCurrentStage():setFocus(  target, nil )
 	end
 	return true -- Prevents touch propagation to underlying objects
@@ -656,7 +648,6 @@ local function spawnRow( group, rowX, rowY )
 		frame.x = initX 
 		frame.y = rowY
 		frame.isBullet = true
-		physics.addBody( frame, "dynamic", { radius=50, isSensor=true } )
 		frame:addEventListener( "touch", dragItem )
 		--handling frame transition
 		transition.to( frame, { alpha=1, time=300 } )
@@ -693,7 +684,7 @@ local function respawn( group ) --for repawming elements
 	basket.name = selectedBasket["name"]
 	basket.x = 475
 	basket.y = 260
-	physics.addBody( basket, "static", { radius=0.8, outline=box_outline } ) --physics box
+	physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 	--print( json.prettify( selectedBasket ) )
 end
 -----------------------------------------
@@ -773,7 +764,7 @@ function scene:create( event )
 	basket.name = selectedBasket["name"]
 	basket.x = 475
 	basket.y = 260
-	physics.addBody( basket, "static", { radius=0.8, outline=box_outline } ) --physics box
+	physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 
 	transition.from( basket, { height=200, width=20, alpha=0, delay=700 } )
 	transition.to( basket, { height=100, width=200, alpha=1, time=600, delay=650 } )
