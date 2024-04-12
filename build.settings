@@ -24,7 +24,7 @@ settings =
 			"android.permission.ACCESS_NETWORK_STATE",
 			"android.permission.WAKE_LOCK",
 			"android.permission-group.STORAGE",
-			"android.permission-group.PHONE"
+			"android.permission-group.PHONE",
 		},
 	},
 

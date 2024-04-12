@@ -3,6 +3,9 @@
 -----------------------------------------
 local composer = require( "composer" )
 local scene = composer.newScene()
+
+langScene = nil
+langScene2 = nil
 --initializing variables
 local background
 local board
@@ -13,30 +16,46 @@ local scoreButton
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
 --buttons events
+local function showMenu()
+	composer.showOverlay("Scenes.Overlay.menu")
+end
+local function langHandle()
+	print( lang )
+	if( lang == "ES" )then
+		langScene = "Scenes.play_menu_es"
+		langScene2 = "Scenes.scores_es"
+	elseif( lang == "EN" )then
+		langScene = "Scenes.play_menu"
+		langScene2 = "Scenes.scores"
+	else
+		langScene = "Scenes.play_menu"
+		langScene2 = "Scenes.scores"
+	end
+end
 local function gotoPlay()
 	chalkButton = audio.play( chalkSound )
 	local play_options = {
 		time=700, 
 		effect="slideLeft"
 	}
-	composer.gotoScene( "Scenes.play_menu", play_options )
+	composer.gotoScene( langScene, play_options )
 end
 local function gotoScore()
 	chalkButton = audio.play( chalkSound )
-	composer.gotoScene( "Scenes.scores", { time=700, effect="slideUp" } )
+	composer.gotoScene( langScene2, { time=700, effect="slideUp" } )
 end
 -----------------------------------------
 -- Scene
 -----------------------------------------
 function scene:create( event )
 	local sceneGroup = self.view
-
-	local permissionOptions = {
-		appPermission = "Storage",
-		urgency = "Critical",
-		rationaleTitle = "Storage permission required"
-	}
-	native.showPopup( "requestAppPermission", permissionOptions )
+	langHandle()
+	-- local permissionOptions = {
+	-- 	appPermission = "Storage",
+	-- 	urgency = "Critical",
+	-- 	rationaleTitle = "Storage permission required"
+	-- }
+	-- native.showPopup( "requestAppPermission", permissionOptions )
 
 	background = display.newImageRect( sceneGroup, "Assets/Background/main.png", 900, 520 )
 	background.x = display.contentCenterX
@@ -59,6 +78,11 @@ function scene:create( event )
 	scoreButton.x = display.contentCenterX
 	scoreButton.y = 255
 
+	local menuButton = display.newImageRect( sceneGroup, "Assets/Buttons/menu.png", 80, 40 )
+	menuButton.x = 545
+	menuButton.y = 25
+
+	menuButton:addEventListener( "tap", showMenu )
 	playButton:addEventListener( "tap", gotoPlay )
 	scoreButton:addEventListener( "tap", gotoScore )
 end
@@ -70,6 +94,7 @@ function scene:hide( event )
 	elseif( phase == "did" )then
 		if (chalkButton ~= nil)then audio.stop( chalkButton ) end
 		chalkButton = nil
+		composer.removeScene("Scenes.main_menu")
 	end
 end
 scene:addEventListener( "create", scene )

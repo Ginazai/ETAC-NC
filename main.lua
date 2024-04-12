@@ -4,6 +4,7 @@
 --
 -----------------------------------------------------------------------------------------
 local composer = require( "composer" )
+lang = "EN"
 --global function to play the voice of the scene
 --Background sound
 local backgroundOptions = 
