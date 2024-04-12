@@ -16,7 +16,7 @@ local playSound = audio.loadSound( "Audio/magic-2.mp3" )
 local playButtonSound = nil
 --functions
 local function audioPlayer()
-	activeVoice("Audio/voice/level_2_finish.wav")
+	activeVoice("Audio/voice/ES/nivel_2.mp3")
 end
 local function onExit() --exiting menu handler
 	playChalk = audio.play( chalkSound )

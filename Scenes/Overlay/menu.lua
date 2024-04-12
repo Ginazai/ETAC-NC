@@ -8,7 +8,7 @@ local scene = composer.newScene()
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" ) --back button chalk sound
 local playChalk = nil
 --functions
-local function setLang(option)
+local function setLang(option,event)
 	if( option == "EN" )then
 		lang = "EN"
 	elseif( option == "ES" )then
@@ -60,7 +60,6 @@ function scene:show( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
-		activeVoice("Audio/voice/exit.wav")
 	end
 end
 function scene:hide( event )
@@ -72,7 +71,7 @@ function scene:hide( event )
 	elseif( phase == "did" )then
 		if (playQuestion ~= nil)then audio.stop( playQuestion ) end
 		playQuestion = nil
-		composer.hideOverlay("Scenes.Overlay.menu")
+		composer.removeScene("Scenes.Overlay.menu")
 	end
 end
 

@@ -16,7 +16,7 @@ local playSound = audio.loadSound( "Audio/magic-2.mp3" )
 local playButtonSound = nil
 --functions
 local function audioPlayer()
-	local options = {"Audio/voice/win_1.wav","Audio/voice/win_2.wav"}
+	local options = {"Audio/voice/ES/ganar_1.mp3","Audio/voice/ES/ganar_2.mp3"}
 	activeVoice(options[math.random(1,2)])
 end
 local function onExit() --exiting menu handler

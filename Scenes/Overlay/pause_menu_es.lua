@@ -53,7 +53,7 @@ function scene:show( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
-		activeVoice("Audio/voice/exit.wav")
+		activeVoice("Audio/voice/ES/salir.mp3")
 	end
 end
 function scene:hide( event )

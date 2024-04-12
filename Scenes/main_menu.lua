@@ -17,7 +17,7 @@ local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
 --buttons events
 local function showMenu()
-	composer.showOverlay("Scenes.Overlay.menu")
+	composer.gotoScene("Scenes.Overlay.menu")
 end
 local function langHandle()
 	print( lang )
@@ -25,9 +25,6 @@ local function langHandle()
 		langScene = "Scenes.play_menu_es"
 		langScene2 = "Scenes.scores_es"
 	elseif( lang == "EN" )then
-		langScene = "Scenes.play_menu"
-		langScene2 = "Scenes.scores"
-	else
 		langScene = "Scenes.play_menu"
 		langScene2 = "Scenes.scores"
 	end

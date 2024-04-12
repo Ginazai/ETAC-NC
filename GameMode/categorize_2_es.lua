@@ -398,15 +398,15 @@ end
 --listen name of the category 
 local function instructions()
 	if( selectedBasket.name == "foodBasket" )then
-		return "Audio/voice/insert_food.wav"
+		return "Audio/voice/ES/comida.mp3"
 	elseif( selectedBasket.name == "animalBasket" )then
-		return "Audio/voice/get_animals.wav"
+		return "Audio/voice/ES/animales.mp3"
 	elseif( selectedBasket.name == "vehiclesBasket" )then
-		return "Audio/voice/which_are_vehicles.wav"
+		return "Audio/voice/ES/vehiculos.mp3"
 	elseif( selectedBasket.name == "clothesBasket" )then
-		return "Audio/voice/put_clothes.wav"
+		return "Audio/voice/ES/ropa.mp3"
 	elseif( selectedBasket.name == "plantsBasket" )then
-		return "Audio/voice/put_plants.wav"
+		return "Audio/voice/ES/plantas.mp3"
 	end
 end
 --pause menu handler

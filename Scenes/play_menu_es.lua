@@ -94,7 +94,7 @@ function scene:show( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
-		 activeVoice("Audio/voice/game_mode.wav")
+		 activeVoice("Audio/voice/ES/modo_juego.mp3")
 	end
 end
 function scene:hide( event )
