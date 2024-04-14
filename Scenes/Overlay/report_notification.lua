@@ -4,12 +4,6 @@
 --libraries
 local composer = require( "composer" )
 local scene = composer.newScene()
---for email sending = load the smtp and ltn12
-local smtp = require("socket.smtp")
-local mime = require("mime")
-local ltn12 = require("ltn12")
-local openssl = require( "plugin.openssl" )
-local plugin_luasec_ssl = require('plugin_luasec_ssl')
 local path = system.pathForFile( "data_report.csv", system.DocumentsDirectory )
 --sound handling (currently there's no need to create a soud table. might need if more resources are added)
 local winAudio = audio.loadSound( "Audio/win.mp3" ) --audio file
@@ -31,12 +25,7 @@ local function onSend()
 				baseDir= system.DocumentsDirectory, 
 			 	filename= "data_report.csv",
 			 	type="text/csv"
-		 	},
-		 	{
-		 		baseDir = system.DocumentsDirectory,
-		 		filename= "activity_report.csv",
-		 		type="text/csv"
-	 		}
+		 	}
 		}
 	}
 	native.showPopup( "mail", emailOptions )
