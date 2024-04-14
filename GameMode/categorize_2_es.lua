@@ -34,6 +34,12 @@ local timeSpend = 0 --initial time
 local selectedBasket = {} --for basket selection (logic is not scalable, should be rethink)
 local mainSheet = nil
 local secondarySheet = nil
+
+
+local attempted = false
+
+local lastTimeGrab = 0
+local newTimeGrab = 0
 -----------------------------------------
 -- Sheets
 -----------------------------------------
@@ -502,6 +508,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 									--since Solar2d doesn't end the event when
 									--switching too fast within targets
 		eventTimeStart = event.time
+		newTimeGrab = eventTimeStart
 		attempted = false
 
 		sWidth = startingTarget.width --to prevent double collisions when the drag is not release
@@ -536,7 +543,6 @@ local function dragItem( event ) --drag: touch detector + collision detector
     		if(totalSeconds ~= nil)then
     			totalSeconds = tostring(totalSeconds):match("%.(%d+)")
     			totalSeconds = string.sub( totalSeconds, 1, 2 )
-    			--print( "decimals: " .. tostring(totalSeconds) ) 
     		end
     		local seconds = math.floor( totalSeconds*0.6 ) 
     		--print( "sec: " .. seconds )
@@ -550,8 +556,15 @@ local function dragItem( event ) --drag: touch detector + collision detector
     		else
     			globalTarget = "(didn't attempted to insert)"
     		end
+    		--handle time within
+    		local timeWithin = timeSpend - lastTimeGrab
+    		local timeWithinMin = timeWithin / 60
+    		local timeWithinSec = timeWithin % 60
+    		local realTimeWithin = string.format( "%02d:%02d", timeWithinMin, timeWithinSec )
+    		print( realTimeWithin )
+    		lastTimeGrab = timeSpend
 			local insertActivity = [[ INSERT INTO activity VALUES( NULL, "]]..globalObject..[[", 
-			"]]..globalTarget..[[", "]]..date..[[", "]]..eventTimeEnd..[[" ); ]]
+			"]]..globalTarget..[[", "]]..date..[[", "]]..eventTimeEnd..[[", "]]..realTimeWithin..[[" ); ]]
 			db:exec( insertActivity )
 			if( target.width == sWidth
 			and target.height == sHeight)then transition.to( target, { x=defaultX, y=defaultY, time=150, delay=50 } ) end
@@ -716,7 +729,8 @@ function scene:show( event )
 		_object VARCHAR(50) NOT NULL,
 		_target VARCHAR(50) NOT NULL,
 		_date VARCHAR(15) NOT NULL,
-		_time VARCHAR(15) NOT NULL);
+		_time VARCHAR(15) NOT NULL,
+		_time_within VARCHAR(15) NOT NULL);
 		]]
 		--db:exec( testing ) 		--DISABLE!!
 		db:exec( createTable )	--executing table creation query

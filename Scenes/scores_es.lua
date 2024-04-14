@@ -38,28 +38,23 @@ local function createReport()
 		playMagic = audio.play( magicSound )
 		for data in db:nrows("SELECT * FROM scores") do
 			if( i == 1 )then
-				file:write( "Date, Total time spend, Total score \n" )
+				file:write( "Date,Total time spend,Total score \n" )
 			end
-			file:write( data._date .. ", " 
-			.. data.time_spend .. ", " .. data.score .. "\n")
+			file:write( data._date .. "," 
+			.. data.time_spend .. "," .. data.score .. "\n")
 			i = i + 1
 		end
-		io.close( file )
-	end
-	local path2 = system.pathForFile( "activity_report.csv", system.DocumentsDirectory )
-	local file2 = io.open( path2, "w" )
-	local i = 1 
-	if( file2 ~= nil )then
+		i = 1
 		for dt in db:nrows("SELECT * FROM activity") do
 			if( i == 1 )then
-				file2:write( "Date, Time spend (mm:ss), Object, Target \n" )
+				file:write( "\nDate,Time within grab (mm:ss),Time grabbing (mm:ss),Object,Target \n" )
 			end
-			file2:write( dt._date .. ", " .. dt._time .. ", " 
-			.. dt._object .. ", " .. dt._target .. "\n")
+			file:write( dt._date .. "," .. dt._time_within .. "," .. dt._time .. "," 
+			.. dt._object .. "," .. dt._target .. "\n")
 			i = i + 1
-		end
-		io.close( file2 )
-		composer.showOverlay( "Scenes.Overlay.report_notification_es" )
+		end		
+		io.close( file )
+		composer.showOverlay( "Scenes.Overlay.report_notification" )
 	end
 end
 --Create table view for scores
