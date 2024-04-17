@@ -3,13 +3,11 @@
 -----------------------------------------
 --libraries
 local composer = require( "composer" )
+local sqlite = require( "sqlite3" ) 
+local path = system.pathForFile( "data.db", system.DocumentsDirectory )
+local db = sqlite.open( path )
 local scene = composer.newScene()
 --for email sending = load the smtp and ltn12
-local smtp = require("socket.smtp")
-local mime = require("mime")
-local ltn12 = require("ltn12")
-local openssl = require( "plugin.openssl" )
-local plugin_luasec_ssl = require('plugin_luasec_ssl')
 local path = system.pathForFile( "data_report.csv", system.DocumentsDirectory )
 --sound handling (currently there's no need to create a soud table. might need if more resources are added)
 local winAudio = audio.loadSound( "Audio/win.mp3" ) --audio file
@@ -40,6 +38,10 @@ local function onSend()
 		}
 	}
 	native.showPopup( "mail", emailOptions )
+	local dropScores = [[DROP TABLE IF EXISTS scores;]]
+	local dropActivity = [[DROP TABLE IF EXISTS activity;]]
+	db:exec( dropScores )
+	db:exec( dropActivity )
 end
 -----------------------------------------
 -- Scenes

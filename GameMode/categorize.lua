@@ -812,8 +812,8 @@ function scene:show( event )
 
 	if(phase == "will")then
 		--DB implementation when scene is gonna show
-		local testing = [[ DROP TABLE IF EXISTS scores; ]] --WARNING!! Disable on production. Will drop the table on scene refresh
-		local testing2 = [[ DROP TABLE IF EXISTS activity; ]]
+		--local testing = [[ DROP TABLE IF EXISTS scores; ]] --WARNING!! Disable on production. Will drop the table on scene refresh
+		--local testing2 = [[ DROP TABLE IF EXISTS activity; ]]
 		local createTable = [[
 		CREATE TABLE IF NOT EXISTS scores (
 		id INTEGER PRIMARY KEY, 

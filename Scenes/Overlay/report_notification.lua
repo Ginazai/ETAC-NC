@@ -3,6 +3,9 @@
 -----------------------------------------
 --libraries
 local composer = require( "composer" )
+local sqlite = require( "sqlite3" ) 
+local path = system.pathForFile( "data.db", system.DocumentsDirectory )
+local db = sqlite.open( path )
 local scene = composer.newScene()
 local path = system.pathForFile( "data_report.csv", system.DocumentsDirectory )
 --sound handling (currently there's no need to create a soud table. might need if more resources are added)
@@ -29,6 +32,10 @@ local function onSend()
 		}
 	}
 	native.showPopup( "mail", emailOptions )
+	local dropScores = [[DROP TABLE IF EXISTS scores;]]
+	local dropActivity = [[DROP TABLE IF EXISTS activity;]]
+	db:exec( dropScores )
+	db:exec( dropActivity )
 end
 -----------------------------------------
 -- Scenes
