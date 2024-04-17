@@ -22,6 +22,10 @@ local function onAccept() --continue menu handler
 end
 
 local function onSend()
+	local dropScores = [[DROP TABLE IF EXISTS scores;]]
+	local dropActivity = [[DROP TABLE IF EXISTS activity;]]
+	db:exec( dropScores )
+	db:exec( dropActivity )
 	local emailOptions = {
 		subject = "Data Report",
 		attachment = {
@@ -38,10 +42,7 @@ local function onSend()
 		}
 	}
 	native.showPopup( "mail", emailOptions )
-	local dropScores = [[DROP TABLE IF EXISTS scores;]]
-	local dropActivity = [[DROP TABLE IF EXISTS activity;]]
-	db:exec( dropScores )
-	db:exec( dropActivity )
+	composer.gotoScene( "Scenes.main_menu" )
 end
 -----------------------------------------
 -- Scenes
