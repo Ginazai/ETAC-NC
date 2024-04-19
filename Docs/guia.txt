@@ -1,0 +1,43 @@
+Estructura:
+Introducción
+Objetivos
+Contenido del Proyecto
+Metodología
+Resultados y Conclusiones.
+--------------------------------------------------
+Introduccion
+--------------------------------------------------
+Procesos:
+•El diseño conceptual es la segunda parte del proyecto ya presentado Proposal of an Interactive Application to Stimulate Spoken Language in the Autism Spectrum, que fue probado y publicado. 
+•En esta ocasion se realizo el diseño de una nueva aplicación 
+•Debe pasar por un comité de Bioética si Aplica. 
+•Selección de las muestras y aplicaciones de las pruebas.
+•Análisis e interpretación de los resultados.
+•Publicación de los hallazgos. 
+--------------------------------------------------
+Objetivos
+--------------------------------------------------
+La presente herramienta pretende asemejar en la medida de lo posible un proceso de juego casual en el celular. Entre otras razones con la finalidad de que el niño no se sienta presionado, ya que como es bien sabido una de las características presentes a lo largo de todo el espectro autista tiende a ser una reducida capacidad social por parte del individuo. Esto dificulta que ciertas actividades puedan ser enseñadas al individuo por cualquier persona (debido a la particular reticencia ante los desconocidos que demuestran algunos), además también de dificultar una correcta y completa comprensión del alcance en la capacidad de desarrollo del niño, ya que, al no sentirse cómodo con la interacción social, dificulta el trabajo del especialista a la hora de evaluarle para realizar un diagnóstico acertado. Con el uso de la herramienta presentada, basta con ensenar al niño las bases de la funcionalidad de la aplicación para que, una vez comprenda, se le pueda guiar con mayor sutileza en la curva de aprendizaje en cuanto al reconocimiento y categorización de elementos, así como poder llevar un monitoreo progresivo de los avances del niño a través de las sesiones mediante la generación de informes que facilita la aplicación. 
+Un uso adicional, es que, debido a que los niños con autismo disfrutan de la repetición, la herramienta puede servir también con fines terapéuticos para calmar al niño y mantener su mente ocupada. Además, el hecho de que disfrute de tales actividades garantiza que se involucre exitosamente con la aplicación.
+--------------------------------------------------
+Contenido del Proyecto
+--------------------------------------------------
+En que se basa la investigación:
+•Estimular al niño autista y medir el tiempo de respuesta al aplicarle las pruebas. 
+•Generar conocimiento. 
+•Desarrolla los procesos cognitivos, debe aprender a diferenciar diferentes cosas. 
+•A demás a medir el tiempo de respuesta durante el aprendizaje. 
+•Permite a través de un proceso de retroalimentación evaluar y diseñar nuevas formas de interacción con el autista que permita explorar otras áreas del conocimiento y desarrollar habilidades y destreza en su entorno.
+--------------------------------------------------
+Metodologia
+--------------------------------------------------
+-Esta aplicación está dirigida a niños con TEA sin comorbilidad.
+-El niño debe tener la capacidad de dar una respuesta para poder ordenar las cosas.
+-El niño está haciendo una reflexión consciente porque es capaz de reconocer las cosas.
+-Se le coloca en una posición en la que debe reconocer y procesar la información.
+--------------------------------------------------
+Resultados y Conclusiones
+--------------------------------------------------
+-Tiene como resultado estimular la capacidad del desarrollo cognitivo del niño con TEA.
+-Es capaz de identificar las capacidades de respuesta que tiene el niño y como se potencia la capacidad de respuesta a lo largo del uso de la aplicación.
+-Otorga una oportunidad de enseñarle nuevas actividades a los niños autistas.

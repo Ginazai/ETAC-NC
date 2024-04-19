@@ -82,7 +82,7 @@ function scene:create( event )
 	textCat:setTextColor( 0.35, 0.27, 0.46 )
 	
 	backButton = display.newImageRect( sceneGroup, "Assets/Buttons/back.png", 50, 25 )
-	backButton.x = 0
+	backButton.x = display.safeScreenOriginX + 35
 	backButton.y = 16
 
 	option1:addEventListener( "tap", gotoFree )

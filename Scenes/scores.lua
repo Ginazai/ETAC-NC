@@ -136,7 +136,7 @@ function scene:create( event )
 	board.y = display.contentCenterY + 5
 
 	backButton = display.newImageRect( sceneGroup, "Assets/Buttons/back.png", 50, 25 )
-	backButton.x = 0
+	backButton.x = display.safeScreenOriginX + 35
 	backButton.y = 20
 
 	local reportButton = display.newImageRect( sceneGroup, "Assets/Buttons/report.png", 100, 50 ) --level 2 button (level 2 not yet implemented)

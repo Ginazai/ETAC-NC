@@ -65,11 +65,11 @@ function scene:create( event )
 	transition.to( prize, { width=580, height=315, time=600, delay=500 } ) --set delay from previous transition
 
 	local backButton = display.newImageRect( uiGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
-	backButton.x = 0
+	backButton.x = display.safeScreenOriginX + 35
 	backButton.y = 16
 
 	local continueButton = display.newImageRect( uiGroup, "Assets/Buttons/continue.png", 50, 25 ) --level 2 button (level 2 not yet implemented)
-	continueButton.x = 500
+	continueButton.x = display.contentCenterX + 215 
 	continueButton.y = 300
 
 	backButton:addEventListener( "tap", onExit ) --go back listener

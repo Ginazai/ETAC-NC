@@ -64,7 +64,7 @@ function scene:create( event )
 	board.y = display.contentCenterY + 5
 
 	logo = display.newImageRect( sceneGroup, "Assets/Background/logo.png", 229, 65 )
-	logo.x = display.contentCenterX
+	logo.x = display.contentCenterX 
 	logo.y = 110
 
 	playButton = display.newImageRect( sceneGroup, "Assets/Buttons/start.png",  130, 60 ) 
@@ -76,7 +76,7 @@ function scene:create( event )
 	scoreButton.y = 255
 
 	local menuButton = display.newImageRect( sceneGroup, "Assets/Buttons/menu.png", 80, 40 )
-	menuButton.x = 545
+	menuButton.x = display.contentCenterX + 230
 	menuButton.y = 25
 
 	menuButton:addEventListener( "tap", showMenu )
