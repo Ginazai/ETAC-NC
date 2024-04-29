@@ -15,7 +15,20 @@ local scoreButton
 
 local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
---buttons events
+-----------------------------------------
+--canva settings
+-----------------------------------------
+local firstHalfCenterX = display.contentCenterX / 2
+local secondHalfCenterX = display.contentCenterX + (firstHalfCenterX)
+
+local firstHalfCenterY = display.contentCenterY / 2
+local secondHalfCenterY = display.contentCenterY + (firstHalfCenterY)
+local referenceSize = nil
+if( display.contentHeight > display.contentWidth )then referenceSize = display.contentHeight
+else referenceSize = display.contentWidth end
+-----------------------------------------
+--button events
+-----------------------------------------
 local function showMenu()
 	composer.gotoScene("Scenes.Overlay.menu")
 end
@@ -76,7 +89,7 @@ function scene:create( event )
 	scoreButton.y = 255
 
 	local menuButton = display.newImageRect( sceneGroup, "Assets/Buttons/menu.png", 80, 40 )
-	menuButton.x = display.contentCenterX + 230
+	menuButton.x = secondHalfCenterX + (secondHalfCenterX/3.5)
 	menuButton.y = 25
 
 	menuButton:addEventListener( "tap", showMenu )

@@ -41,6 +41,18 @@ local attempted = false
 local lastTimeGrab = 0
 local newTimeGrab = 0
 -----------------------------------------
+--canva settings
+-----------------------------------------
+local firstHalfCenterX = display.contentCenterX / 2
+local secondHalfCenterX = display.contentCenterX + (firstHalfCenterX)
+
+local firstHalfCenterY = display.contentCenterY / 2
+local secondHalfCenterY = display.contentCenterY + (firstHalfCenterY)
+
+local referenceSize = nil
+if( display.contentHeight > display.contentWidth )then referenceSize = display.contentHeight
+else referenceSize = display.contentWidth end
+-----------------------------------------
 -- Sheets
 -----------------------------------------
 local fSheet = 
@@ -683,21 +695,21 @@ local function respawn( group ) --for repawming elements
 		end
 	end
 	--respawn the rows
-	spawnRow( group, display.contentWidth * 0.1, display.contentHeight * 0.5, display.contentWidth * 0.09)
-	spawnRow( group, display.contentWidth * 0.1, display.contentHeight * 0.7, display.contentWidth * 0.09)
-	spawnRow( group, display.contentWidth * 0.1, display.contentHeight * 0.9, display.contentWidth * 0.09)
+	spawnRow( group, firstHalfCenterX - (firstHalfCenterX/1.35), display.contentHeight * 0.5, display.contentWidth * 0.09)
+	spawnRow( group,firstHalfCenterX - (firstHalfCenterX/1.35), display.contentHeight * 0.7, display.contentWidth * 0.09)
+	spawnRow( group, firstHalfCenterX - (firstHalfCenterX/1.35), display.contentHeight * 0.9, display.contentWidth * 0.09)
 	--redisplay text-box
 	local textBox = display.newImageRect( group, "Assets/Background/text-box.png", 200, 100 )
-	textBox.x = display.contentCenterX + 150
+	textBox.x = secondHalfCenterX
 	textBox.y = 100
 	--redisplay text
-	local textCategory = display.newText( group, selectedBasket["text"], display.contentCenterX + 150, 110, "Fonts/FORTE.TTF", 35 )
+	local textCategory = display.newText( group, selectedBasket["text"], secondHalfCenterX, 110, "Fonts/FORTE.TTF", 35 )
 	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
 	textCategory:setTextColor( 1, 0.85, 0.31  )
 	--redisplay the basket
-	local basket = display.newImageRect( group, selectedBasket["src"], display.pixelWidth * 0.25, display.pixelHeight * 0.08 )
+	local basket = display.newImageRect( group, selectedBasket["src"], referenceSize * 0.4, referenceSize * 0.2 )
 	basket.name = selectedBasket["name"]
-	basket.x = display.contentCenterX + 150
+	basket.x = secondHalfCenterX
 	basket.y = 260
 	local box_params = { halfWidth=15, halfHeight=8 }
 	physics.addBody( basket, "static", { box=box_params } )
@@ -775,53 +787,53 @@ function scene:show( event )
 	backButton.y = 16
 
 	local secondBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", display.contentWidth * 0.7, display.contentHeight * 0.7 )
-	secondBoard.x = display.contentCenterX - 100
+	secondBoard.x = firstHalfCenterX
 	secondBoard.y = display.contentCenterY + 60
 
 	-- transition.from( secondBoard, { y=400 } )
 	-- transition.to( secondBoard, { y=200 } )
 
-	local basketBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", display.pixelWidth * 0.25, display.pixelHeight * 0.1 )
-	basketBoard.x = display.contentCenterX + 150
+	local basketBoard = display.newImageRect( mainGroup, "Assets/Background/board-2.png", referenceSize * 0.5, referenceSize * 0.3 )
+	basketBoard.x = secondHalfCenterX
 	basketBoard.y = 260
 
 	local textBox = display.newImageRect( categoriesGroup, "Assets/Background/text-box.png", 200, 100 )
-	textBox.x = display.contentCenterX + 150
+	textBox.x = secondHalfCenterX
 	textBox.y = 100 
 
-	spawnRow( categoriesGroup, display.contentWidth * 0.1, display.contentHeight * 0.5, display.contentWidth * 0.09)
-	spawnRow( categoriesGroup, display.contentWidth * 0.1, display.contentHeight * 0.7, display.contentWidth * 0.09)
-	spawnRow( categoriesGroup, display.contentWidth * 0.1, display.contentHeight * 0.9, display.contentWidth * 0.09)
+	spawnRow( categoriesGroup, firstHalfCenterX - (firstHalfCenterX/1.35), display.contentHeight * 0.5, display.contentWidth * 0.09)
+	spawnRow( categoriesGroup,firstHalfCenterX - (firstHalfCenterX/1.35), display.contentHeight * 0.7, display.contentWidth * 0.09)
+	spawnRow( categoriesGroup, firstHalfCenterX - (firstHalfCenterX/1.35), display.contentHeight * 0.9, display.contentWidth * 0.09)
 
 	-- transition.from( textCategory, { alpha=0, size=0 } )
 	-- transition.to( textCategory, { alpha=1, size=35, time=500 } )
 
-	local function respawnRow( event )
-		respawn( categoriesGroup )
-	end
+		local function respawnRow( event )
+			respawn( categoriesGroup )
+		end
 
-	local textCategory = display.newText( categoriesGroup, selectedBasket["text"], display.contentCenterX + 150, 110, "Fonts/FORTE.TTF", 35 )
-	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
-	textCategory:setTextColor( 1, 0.85, 0.31  )
+		local textCategory = display.newText( categoriesGroup, selectedBasket["text"], secondHalfCenterX, 110, "Fonts/FORTE.TTF", 35 )
+		textCategory.font = native.newFont( "Fonts.FORTE", 16 )
+		textCategory:setTextColor( 1, 0.85, 0.31  )
 
-	local basket = display.newImageRect( categoriesGroup, selectedBasket["src"], display.pixelWidth * 0.25, display.pixelHeight * 0.08 )
-	basket.name = selectedBasket["name"]
-	basket.x = display.contentCenterX + 150
-	basket.y = 260
-	local box_params = { halfWidth=15, halfHeight=8 }
-	physics.addBody( basket, "static", { box=box_params } )
-	--physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
+		local basket = display.newImageRect( categoriesGroup, selectedBasket["src"], referenceSize * 0.4, referenceSize * 0.2 )
+		basket.name = selectedBasket["name"]
+		basket.x = secondHalfCenterX
+		basket.y = 260
+		local box_params = { halfWidth=15, halfHeight=8 }
+		physics.addBody( basket, "static", { box=box_params } )
+		--physics.addBody( basket, "static", { radius=1.35, outline=box_outline } ) --physics box
 
-	-- transition.from( basket, { height=200, width=20, alpha=0, delay=700 } )
-	-- transition.to( basket, { height=100, width=200, alpha=1, time=600, delay=650 } )
+		-- transition.from( basket, { height=200, width=20, alpha=0, delay=700 } )
+		-- transition.to( basket, { height=100, width=200, alpha=1, time=600, delay=650 } )
 
-	local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
-	respawnButton.x = display.contentCenterX + 215
-	respawnButton.y = 16
+		local respawnButton = display.newImageRect( uiGroup, "Assets/Buttons/respawn.png", 50, 25 )
+		respawnButton.x = display.contentCenterX + 215
+		respawnButton.y = 16
 
-	local questionButton = display.newImageRect( uiGroup, "Assets/Buttons/question.png", 65, 33 )
-	questionButton.x = display.contentCenterX + 150
-	questionButton.y = 73
+		local questionButton = display.newImageRect( uiGroup, "Assets/Buttons/question.png", 65, 33 )
+		questionButton.x = secondHalfCenterX
+		questionButton.y = 73
 
 		questionButton:addEventListener( "tap", askInstructions )
 		respawnButton:addEventListener( "tap", respawnRow )

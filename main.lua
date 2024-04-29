@@ -5,6 +5,9 @@
 -----------------------------------------------------------------------------------------
 local composer = require( "composer" )
 lang = "ES"
+function trial()
+	print("I'm being called from main")
+end
 --global function to play the voice of the scene
 --Background sound
 local backgroundOptions = 
@@ -22,19 +25,27 @@ function activeVoice(source)
 	local voice = audio.loadSound( source )
 	local playVoice = audio.play( voice )
 end
+------------------------------------------
+--TEMP TRIAL AREA TO UNIFY CODE
+------------------------------------------
+
+
+
+------------------------------------------
+--TEMP TRIAL AREA TO UNIFY CODE
+------------------------------------------
 --go to menu when back space is selected
 local function gotoMenu()
 	composer.gotoScene( "Scenes.main_menu", { time=500, effect="slideRight" } )
 end
--- local function onBkPress( event )
--- 	if ( event.keyName == "back" ) then
--- 	    if ( system.getInfo("platform") == "android" ) then
--- 	    	gotoMenu()
--- 	        return true
--- 	    end
--- 	end
--- 	return false
--- end
+local function onBkPress( event )
+	if ( event.keyName == "back" ) then
+	    if ( system.getInfo("platform") == "android" ) then
+	        return true
+	    end
+	end
+	return false
+end
 --selecting main scene
 composer.gotoScene( "Scenes.main_menu" )
---Runtime:addEventListener( "key", onBkPress )
+Runtime:addEventListener( "key", onBkPress )
