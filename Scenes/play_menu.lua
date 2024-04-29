@@ -14,7 +14,25 @@ local chalkSound = audio.loadSound( "Audio/chalk-tap.mp3" )
 local chalkButton = nil
 local blocksSound = audio.loadSound( "Audio/blocks-falling.mp3" )
 local blocksPlay = nil
-
+-----------------------------------------
+--handle lang variables
+-----------------------------------------
+local langOptions = {}
+if(lang=="ES")then
+	langOptions = {
+		title = "Modo de Juego",
+		mode1 = "Libre",
+		mode2 = "Categorizar",
+		titleFontSize = 30
+	}
+elseif(lang=="EN")then
+	langOptions = {
+		title = "Game Mode",
+		mode1 = "Free",
+		mode2 = "Categorize",
+		titleFontSize = 35
+	}
+end
 --button control functions
 local function gotoMenu()
 	chalkButton = audio.play( chalkSound )
@@ -53,7 +71,7 @@ function scene:create( event )
 	textBox.x = display.contentCenterX
 	textBox.y = 60
 
-	local textCategory = display.newText( sceneGroup, "Game Mode", display.contentCenterX, 65, "Fonts/FORTE.TTF", 35 )
+	local textCategory = display.newText( sceneGroup, langOptions.title, display.contentCenterX, 65, "Fonts/FORTE.TTF", langOptions.titleFontSize )
 	textCategory.font = native.newFont( "Fonts.FORTE", 16 )
 	textCategory:setTextColor( 1, 0.85, 0.31 )
 
@@ -69,7 +87,7 @@ function scene:create( event )
 	option1.x = 135
 	option1.y = display.contentCenterY + 45
 
-	local textFree = display.newText( sceneGroup, "Free", 135, 285, "Fonts/FORTE.TTF", 25 )
+	local textFree = display.newText( sceneGroup, langOptions.mode1, 135, 285, "Fonts/FORTE.TTF", 25 )
 	textFree.font = native.newFont( "Fonts.FORTE", 16 )
 	textFree:setTextColor( 0.35, 0.27, 0.46 )
 
@@ -77,7 +95,7 @@ function scene:create( event )
 	option2.x = 345
 	option2.y = display.contentCenterY + 45
 
-	local textCat = display.newText( sceneGroup, "Categorize", 345, 285, "Fonts/FORTE.TTF", 25 )
+	local textCat = display.newText( sceneGroup, langOptions.mode2, 345, 285, "Fonts/FORTE.TTF", 25 )
 	textCat.font = native.newFont( "Fonts.FORTE", 16 )
 	textCat:setTextColor( 0.35, 0.27, 0.46 )
 	
@@ -94,7 +112,11 @@ function scene:show( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
-		 activeVoice("Audio/voice/game_mode.wav")
+		if(lang=="ES")then
+			activeVoice("Audio/voice/ES/modo_juego.mp3")
+		elseif(lang=="EN")then
+			activeVoice("Audio/voice/game_mode.wav")
+		end
 	end
 end
 function scene:hide( event )

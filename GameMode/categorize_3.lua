@@ -31,7 +31,6 @@ local score = 0 --initial score
 local expectedScore = 30 -- expected score for the level
 local scoreText --for testing score, might remove
 local timeSpend = 0 --initial time
-local selectedBasket = {} --for basket selection (logic is not scalable, should be rethink)
 local mainSheet = nil
 local secondarySheet = nil
 
@@ -53,384 +52,8 @@ local referenceSize = nil
 if( display.contentHeight > display.contentWidth )then referenceSize = display.contentHeight
 else referenceSize = display.contentWidth end
 -----------------------------------------
--- Sheets
------------------------------------------
-local fSheet = 
-{	--Food sheet frames
-	frames = 
-	{
-		{ --frame 1
-			x = 0,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 2
-			x = 296,
-			y = 0,
-			width = 290,
-			height = 293
-		},
-		{ --frame 3
-			x = 591,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 4
-			x = 882,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 5
-			x = 1173,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 6
-			x = 1466,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 7
-			x = 1759,
-			y = 0,
-			width = 290,
-			height = 293
-		},
-		{ --frame 8
-			x = 2051,
-			y = 0,
-			width = 292,
-			height = 293
-		},
-		{ --frame 9
-			x = 2341,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 10
-			x = 2638,
-			y = 0,
-			width = 293,
-			height = 293
-		}
-	},
-	numframes = 10,
-	sheetContentWidth = 2931,
-	sheetContentHeight = 293
-}
-local aSheet = 	
-{	--Animals sheet frames
-	frames = 
-	{
-		{ --frame 1
-			x = 0,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 2
-			x = 296,
-			y = 0,
-			width = 292,
-			height = 293
-		},
-		{ --frame 3
-			x = 591,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 4
-			x = 882,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 5
-			x = 1173,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 6
-			x = 1466,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 7
-			x = 1759,
-			y = 0,
-			width = 290,
-			height = 293
-		},
-		{ --frame 8
-			x = 2049,
-			y = 0,
-			width = 292,
-			height = 293
-		},
-		{ --frame 9
-			x = 2343,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 10
-			x = 2636,
-			y = 0,
-			width = 295,
-			height = 293
-		}
-	},
-	numframes = 10,
-	sheetContentWidth = 2931,
-	sheetContentHeight = 293
-}
-local cSheet = 	
-{	--Clothes sheet frames
-	frames = 
-	{
-		{ --frame 1
-			x = 0,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 2
-			x = 296,
-			y = 0,
-			width = 292,
-			height = 193
-		},
-		{ --frame 3
-			x = 591,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 4
-			x = 882,
-			y = 0,
-			width = 285,
-			height = 240
-		},
-		{ --frame 5
-			x = 1173,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 6
-			x = 1466,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 7
-			x = 1759,
-			y = 0,
-			width = 290,
-			height = 244
-		},
-		{ --frame 8
-			x = 2049,
-			y = 0,
-			width = 289,
-			height = 246
-		},
-		{ --frame 9
-			x = 2343,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 10
-			x = 2636,
-			y = 0,
-			width = 295,
-			height = 240
-		}
-	},
-	numframes = 10,
-	sheetContentWidth = 2928,
-	sheetContentHeight = 244
-}
-local pSheet = 	
-{	--Plants sheet frames
-	frames = 
-	{
-		{ --frame 1
-			x = 0,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 2
-			x = 296,
-			y = 0,
-			width = 292,
-			height = 293
-		},
-		{ --frame 3
-			x = 591,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 4
-			x = 882,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 5
-			x = 1173,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 6
-			x = 1466,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 7
-			x = 1759,
-			y = 0,
-			width = 290,
-			height = 293
-		},
-		{ --frame 8
-			x = 2049,
-			y = 0,
-			width = 292,
-			height = 293
-		},
-		{ --frame 9
-			x = 2343,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 10
-			x = 2636,
-			y = 0,
-			width = 295,
-			height = 293
-		}
-	},
-	numframes = 10,
-	sheetContentWidth = 2930,
-	sheetContentHeight = 293
-}
-local vSheet = 	
-{	--Vehicles sheet frames
-	frames = 
-	{
-		{ --frame 1
-			x = 0,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 2
-			x = 296,
-			y = 0,
-			width = 292,
-			height = 293
-		},
-		{ --frame 3
-			x = 591,
-			y = 0,
-			width = 288,
-			height = 293
-		},
-		{ --frame 4
-			x = 882,
-			y = 0,
-			width = 291,
-			height = 293
-		},
-		{ --frame 5
-			x = 1173,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 6
-			x = 1466,
-			y = 0,
-			width = 293,
-			height = 293
-		},
-		{ --frame 7
-			x = 1759,
-			y = 0,
-			width = 290,
-			height = 293
-		},
-		{ --frame 8
-			x = 2049,
-			y = 0,
-			width = 292,
-			height = 293
-		},
-		{ --frame 9
-			x = 2343,
-			y = 0,
-			width = 295,
-			height = 293
-		},
-		{ --frame 10
-			x = 2636,
-			y = 0,
-			width = 295,
-			height = 293
-		}
-	},
-	numframes = 10,
-	sheetContentWidth = 2930,
-	sheetContentHeight = 293
-}
-foodSheet = graphics.newImageSheet( "Assets/Food/food-sheet.png", fSheet )
-animalSheet = graphics.newImageSheet( "Assets/Animals/animals-sheet.png", aSheet )
-clothesSheet = graphics.newImageSheet( "Assets/Clothes/clothes-sheet.png", cSheet )
-plantsSheet = graphics.newImageSheet( "Assets/Plants/plants-sheet.png", pSheet )
-vehiclesSheet = graphics.newImageSheet( "Assets/Vehicles/vehicles-sheet.png", vSheet )
------------------------------------------
 -- Functions
 -----------------------------------------
---scene button handler
-local function gotoPlayMenu() --go back to previous screen (play menu)
-	playChalk = audio.play( chalkSound )
-	composer.gotoScene( "Scenes.play_menu", { time=500, effect="slideRight" } )
-end
---pause menu handler
-local modalOptions = { --pause menu configuration
-    isModal = true,
-    time=350, 
-    effect="slideDown",
-    params = {}
-}
-local modalVictory = { --victory menu configuration
-    isModal = true,
-    time=500, 
-    effect="zoomOutInFade",
-    params = {}
-}
-local function pauseMenu() --pause_menu handler (implement configuration above)
-	playChalk = audio.play( chalkSound )
-	composer.showOverlay( "Scenes.Overlay.pause_menu", modalOptions )
-end
---victory overlay handler
 local function victory() --victory handler (implement configuration above)
 	modalVictory.params.timeSpend = timeSpend --passed the time at the moment of the call to ignore the time that the
 											  --overlay last
@@ -440,20 +63,6 @@ end
 --ask instrutions
 local function askInstructions()
 	activeVoice(instructions())
-end
---listen name of the category 
-local function instructions()
-	if( selectedBasket.name == "foodBasket" )then
-		return "Audio/voice/insert_food.wav"
-	elseif( selectedBasket.name == "animalBasket" )then
-		return "Audio/voice/get_animals.wav"
-	elseif( selectedBasket.name == "vehiclesBasket" )then
-		return "Audio/voice/which_are_vehicles.wav"
-	elseif( selectedBasket.name == "clothesBasket" )then
-		return "Audio/voice/put_clothes.wav"
-	elseif( selectedBasket.name == "plantsBasket" )then
-		return "Audio/voice/put_plants.wav"
-	end
 end
 --timer
 local function timeCounter( event )
@@ -637,7 +246,7 @@ local function spawnRow( group, rowX, rowY, plusDistance)
 				selectedBasket = {						--basket partially random selector 
 					name = "foodBasket",
 					src = "Assets/Food/food-basket.png",
-					text = "Food"
+					text = langOptionsCategorize.text.food
 				}
 			end	
 		elseif(selectedSheets[typeSelector] == animalSheet)then
@@ -647,7 +256,7 @@ local function spawnRow( group, rowX, rowY, plusDistance)
 				selectedBasket = {						--basket partially random selector 
 					name = "animalBasket",
 					src = "Assets/Animals/animals-basket.png",
-					text = "Animals"
+					text = langOptionsCategorize.text.animals
 				}
 			end
 		elseif(selectedSheets[typeSelector] == clothesSheet)then
@@ -657,7 +266,7 @@ local function spawnRow( group, rowX, rowY, plusDistance)
 				selectedBasket = {						--basket partially random selector 
 					name = "clothesBasket",
 					src = "Assets/Clothes/clothes-basket.png",
-					text = "Clothes"
+					text = langOptionsCategorize.text.clothes
 				}
 			end
 		elseif(selectedSheets[typeSelector] == plantsSheet)then
@@ -667,7 +276,7 @@ local function spawnRow( group, rowX, rowY, plusDistance)
 				selectedBasket = {						--basket partially random selector 
 					name = "plantsBasket",
 					src = "Assets/Plants/plants-basket.png",
-					text = "Plants"
+					text = langOptionsCategorize.text.plants
 				}
 			end
 		elseif(selectedSheets[typeSelector] == vehiclesSheet)then
@@ -677,7 +286,7 @@ local function spawnRow( group, rowX, rowY, plusDistance)
 				selectedBasket = {						--basket partially random selector 
 					name = "vehiclesBasket",
 					src = "Assets/Vehicles/vehicles-basket.png",
-					text = "Vehicles"
+					text = langOptionsCategorize.text.vehicles
 				}
 			end
 		end

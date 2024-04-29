@@ -25,15 +25,6 @@ function activeVoice(source)
 	local voice = audio.loadSound( source )
 	local playVoice = audio.play( voice )
 end
-------------------------------------------
---TEMP TRIAL AREA TO UNIFY CODE
-------------------------------------------
-
-
-
-------------------------------------------
---TEMP TRIAL AREA TO UNIFY CODE
-------------------------------------------
 --go to menu when back space is selected
 local function gotoMenu()
 	composer.gotoScene( "Scenes.main_menu", { time=500, effect="slideRight" } )

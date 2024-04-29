@@ -26,21 +26,464 @@ local secondHalfCenterY = display.contentCenterY + (firstHalfCenterY)
 local referenceSize = nil
 if( display.contentHeight > display.contentWidth )then referenceSize = display.contentHeight
 else referenceSize = display.contentWidth end
+------------------------------------------
+--TEMP TRIAL AREA TO UNIFY CODE
+------------------------------------------
+-----------------------------------------
+-- Global variables
+-----------------------------------------
+selectedBasket = {}
+-----------------------------------------
+-- Global variables
+-----------------------------------------
+-----------------------------------------
+-- Sheets
+-----------------------------------------
+fSheet = 
+{	--Food sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 290,
+			height = 293
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 293
+		},
+		{ --frame 8
+			x = 2051,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 9
+			x = 2341,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2638,
+			y = 0,
+			width = 293,
+			height = 293
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2931,
+	sheetContentHeight = 293
+}
+aSheet = 	
+{	--Animals sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 293
+		},
+		{ --frame 8
+			x = 2049,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 9
+			x = 2343,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2636,
+			y = 0,
+			width = 295,
+			height = 293
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2931,
+	sheetContentHeight = 293
+}
+cSheet = 	
+{	--Clothes sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 292,
+			height = 193
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 285,
+			height = 240
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 244
+		},
+		{ --frame 8
+			x = 2049,
+			y = 0,
+			width = 289,
+			height = 246
+		},
+		{ --frame 9
+			x = 2343,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2636,
+			y = 0,
+			width = 295,
+			height = 240
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2928,
+	sheetContentHeight = 244
+}
+pSheet = 	
+{	--Plants sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 293
+		},
+		{ --frame 8
+			x = 2049,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 9
+			x = 2343,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2636,
+			y = 0,
+			width = 295,
+			height = 293
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2930,
+	sheetContentHeight = 293
+}
+vSheet = 	
+{	--Vehicles sheet frames
+	frames = 
+	{
+		{ --frame 1
+			x = 0,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 2
+			x = 296,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 3
+			x = 591,
+			y = 0,
+			width = 288,
+			height = 293
+		},
+		{ --frame 4
+			x = 882,
+			y = 0,
+			width = 291,
+			height = 293
+		},
+		{ --frame 5
+			x = 1173,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 6
+			x = 1466,
+			y = 0,
+			width = 293,
+			height = 293
+		},
+		{ --frame 7
+			x = 1759,
+			y = 0,
+			width = 290,
+			height = 293
+		},
+		{ --frame 8
+			x = 2049,
+			y = 0,
+			width = 292,
+			height = 293
+		},
+		{ --frame 9
+			x = 2343,
+			y = 0,
+			width = 295,
+			height = 293
+		},
+		{ --frame 10
+			x = 2636,
+			y = 0,
+			width = 295,
+			height = 293
+		}
+	},
+	numframes = 10,
+	sheetContentWidth = 2930,
+	sheetContentHeight = 293
+}
+foodSheet = graphics.newImageSheet( "Assets/Food/food-sheet.png", fSheet )
+animalSheet = graphics.newImageSheet( "Assets/Animals/animals-sheet.png", aSheet )
+clothesSheet = graphics.newImageSheet( "Assets/Clothes/clothes-sheet.png", cSheet )
+plantsSheet = graphics.newImageSheet( "Assets/Plants/plants-sheet.png", pSheet )
+vehiclesSheet = graphics.newImageSheet( "Assets/Vehicles/vehicles-sheet.png", vSheet )
+-----------------------------------------
+-- Sheets
+-----------------------------------------
+-----------------------------------------
+-- Categorize Lang handling
+-----------------------------------------
+langOptionsCategorize = {}
+if(lang=="ES")then
+	langOptionsCategorize = {
+		text = {
+			animals = "Animales",
+			plants = "Plantas",
+			food = "Comida",
+			clothes = "Ropa",
+			vehicles = "Vehiculos"
+		},
+		audio = {
+			animals = "Audio/voice/ES/animales.mp3",
+			plants = "Audio/voice/ES/plantas.mp3",
+			food = "Audio/voice/ES/comida.mp3",
+			clothes = "Audio/voice/ES/ropa.mp3",
+			vehicles = "Audio/voice/ES/vehiculos.mp3" 
+		}
+	}
+elseif(lang=="EN")then
+	langOptionsCategorize = {
+		text = {
+			animals = "Animals",
+			plants = "Plants",
+			food = "Food",
+			clothes = "Clothes",
+			vehicles = "Vehicles"
+		},
+		audio = {
+			animals = "Audio/voice/get_animals.wav",
+			plants = "Audio/voice/put_plants.wav",
+			food = "Audio/voice/insert_food.wav",
+			clothes = "Audio/voice/put_clothes.wav",
+			vehicles = "Audio/voice/which_are_vehicles.wav"
+		}
+	}
+end
+-----------------------------------------
+-- Categorize Lang handling
+-----------------------------------------
+-----------------------------------------
+-- Global Functions
+-----------------------------------------
+--scene button handler
+function gotoPlayMenu() --go back to previous screen (play menu)
+	playChalk = audio.play( chalkSound )
+	composer.gotoScene( "Scenes.play_menu", { time=500, effect="slideRight" } )
+end
+--pause menu handler
+modalOptions = { --pause menu configuration
+    isModal = true,
+    time=350, 
+    effect="slideDown",
+    params = {}
+}
+modalVictory = { --victory menu configuration
+    isModal = true,
+    time=500, 
+    effect="zoomOutInFade",
+    params = {}
+}
+function pauseMenu() --pause_menu handler (implement configuration above)
+	playChalk = audio.play( chalkSound )
+	composer.showOverlay( "Scenes.Overlay.pause_menu", modalOptions )
+end
+--listen name of the category 
+function instructions()
+	if( selectedBasket.name == "foodBasket" )then
+		return langOptionsCategorize.audio.food
+	elseif( selectedBasket.name == "animalBasket" )then
+		return langOptionsCategorize.audio.animals
+	elseif( selectedBasket.name == "vehiclesBasket" )then
+		return langOptionsCategorize.audio.vehicles
+	elseif( selectedBasket.name == "clothesBasket" )then
+		return langOptionsCategorize.audio.clothes
+	elseif( selectedBasket.name == "plantsBasket" )then
+		return langOptionsCategorize.audio.plants
+	end
+end
+-----------------------------------------
+-- Global Functions
+-----------------------------------------
+------------------------------------------
+--TEMP TRIAL AREA TO UNIFY CODE
+------------------------------------------
 -----------------------------------------
 --button events
 -----------------------------------------
 local function showMenu()
 	composer.gotoScene("Scenes.Overlay.menu")
-end
-local function langHandle()
-	print( lang )
-	if( lang == "ES" )then
-		langScene = "Scenes.play_menu_es"
-		langScene2 = "Scenes.scores_es"
-	elseif( lang == "EN" )then
-		langScene = "Scenes.play_menu"
-		langScene2 = "Scenes.scores"
-	end
 end
 local function gotoPlay()
 	chalkButton = audio.play( chalkSound )
@@ -48,18 +491,17 @@ local function gotoPlay()
 		time=700, 
 		effect="slideLeft"
 	}
-	composer.gotoScene( langScene, play_options )
+	composer.gotoScene( "Scenes.play_menu", play_options )
 end
 local function gotoScore()
 	chalkButton = audio.play( chalkSound )
-	composer.gotoScene( langScene2, { time=700, effect="slideUp" } )
+	composer.gotoScene( "Scenes.scores", { time=700, effect="slideUp" } )
 end
 -----------------------------------------
 -- Scene
 -----------------------------------------
 function scene:create( event )
 	local sceneGroup = self.view
-	langHandle()
 	-- local permissionOptions = {
 	-- 	appPermission = "Storage",
 	-- 	urgency = "Critical",

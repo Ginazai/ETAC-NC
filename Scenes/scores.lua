@@ -29,6 +29,19 @@ time_spend VARCHAR(10) NOT NULL,
 _date VARCHAR(15) NOT NULL);
 ]]
 db:exec( createTable )
+-----------------------------------------
+-- Lang handling
+-----------------------------------------
+local langOptions = {}
+if(lang=="ES")then
+	langOptions = {
+		reportText = "Crear reporte!"
+	}
+elseif(lang=="EN")then
+	langOptions = {
+		reportText = "Create report!"
+	}
+end
 --Create data report
 local function createReport()
 	local path = system.pathForFile( "data_report.csv", system.DocumentsDirectory )
@@ -143,7 +156,7 @@ function scene:create( event )
 	reportButton.x = display.contentCenterX
 	reportButton.y = 305
 
-	local reportText = display.newText( sceneGroup, "Create report!", display.contentCenterX + 10, 303, "Fonts/FORTE.TTF", 10 )
+	local reportText = display.newText( sceneGroup, langOptions.reportText, display.contentCenterX + 10, 303, "Fonts/FORTE.TTF", 10 )
 	reportText.font = native.newFont( "Fonts.FORTE", 16 )
 	reportText:setTextColor( 0.34, 0.27, 0.46  )
 
