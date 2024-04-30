@@ -16,7 +16,7 @@ local playSound = audio.loadSound( "Audio/magic-2.mp3" )
 local playButtonSound = nil
 --functions
 local function audioPlayer()
-	activeVoice("Audio/voice/level_1_finish.wav")
+	activeVoice(langOptions.categorize_win_1.audio.voice)
 end
 local function onExit() --exiting menu handler
 	playChalk = audio.play( chalkSound )
@@ -60,19 +60,12 @@ function scene:create( event )
 	transition.from( board, { width=0, height=0 } )
 	transition.to( board, { width=600, height=315, time=600 } )
 
-	local levelText = display.newText( mainGroup, "Level 1 completed!", display.contentCenterX, display.contentCenterY - 10, "Fonts/FORTE.TTF", 40 )
+	local levelText = display.newText( mainGroup, langOptions.categorize_win_1.text.head, display.contentCenterX, display.contentCenterY - 10, "Fonts/FORTE.TTF", 40 )
 	levelText.font = native.newFont( "Fonts.FORTE", 16 )
 	levelText:setTextColor( 1, 0.85, 0.31  )
 	--transition handler for prize
 	levelText.alpha = 0
 	transition.to( levelText, { alpha=1, time=500, delay=500 } ) --transition control for text
-
-	-- local prize = display.newImageRect( mainGroup, "Assets/Background/prize.png", 0, 0 ) --prize element display
-	-- prize.x = display.contentCenterX
-	-- prize.y = display.contentCenterY 
-	--transition handler for prize
-	--transition.from( prize, { width=0, height=0 } ) 
-	--transition.to( prize, { width=580, height=315, time=600, delay=500 } ) --set delay from previous transition
 
 	local backButton = display.newImageRect( uiGroup, "Assets/Buttons/back.png", 50, 25 ) --go back button
 	backButton.x = display.safeScreenOriginX + 35

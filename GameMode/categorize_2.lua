@@ -40,18 +40,6 @@ local attempted = false
 local lastTimeGrab = 0
 local newTimeGrab = 0
 -----------------------------------------
---canva settings
------------------------------------------
-local firstHalfCenterX = display.contentCenterX / 2
-local secondHalfCenterX = display.contentCenterX + (firstHalfCenterX)
-
-local firstHalfCenterY = display.contentCenterY / 2
-local secondHalfCenterY = display.contentCenterY + (firstHalfCenterY)
-
-local referenceSize = nil
-if( display.contentHeight > display.contentWidth )then referenceSize = display.contentHeight
-else referenceSize = display.contentWidth end
------------------------------------------
 -- Functions
 -----------------------------------------
 --victory overlay handler
@@ -246,7 +234,7 @@ local function spawnRow( group, rowX, rowY, plusDistance )
 			selectedBasket = {						--basket partially random selector 
 				name = "foodBasket",
 				src = "Assets/Food/food-basket.png",
-				text = langOptionsCategorize.text.food
+				text = langOptions.categorize.text.food
 			}	
 		elseif(selectedSheets[typeSelector] == animalSheet)then
 			frame.name = "animal"
@@ -254,7 +242,7 @@ local function spawnRow( group, rowX, rowY, plusDistance )
 			selectedBasket = {						--basket partially random selector 
 				name = "animalBasket",
 				src = "Assets/Animals/animals-basket.png",
-				text = langOptionsCategorize.text.animals
+				text = langOptions.categorize.text.animals
 			}
 		elseif(selectedSheets[typeSelector] == clothesSheet)then
 			frame.name = "cloth"
@@ -262,7 +250,7 @@ local function spawnRow( group, rowX, rowY, plusDistance )
 			selectedBasket = {						--basket partially random selector 
 				name = "clothesBasket",
 				src = "Assets/Clothes/clothes-basket.png",
-				text = langOptionsCategorize.text.clothes
+				text = langOptions.categorize.text.clothes
 			}
 		elseif(selectedSheets[typeSelector] == plantsSheet)then
 			frame.name = "plant"
@@ -270,7 +258,7 @@ local function spawnRow( group, rowX, rowY, plusDistance )
 			selectedBasket = {						--basket partially random selector 
 				name = "plantsBasket",
 				src = "Assets/Plants/plants-basket.png",
-				text = langOptionsCategorize.text.plants
+				text = langOptions.categorize.text.plants
 			}
 		elseif(selectedSheets[typeSelector] == vehiclesSheet)then
 			frame.name = "vehicle"
@@ -278,7 +266,7 @@ local function spawnRow( group, rowX, rowY, plusDistance )
 			selectedBasket = {						--basket partially random selector 
 				name = "vehiclesBasket",
 				src = "Assets/Vehicles/vehicles-basket.png",
-				text = langOptionsCategorize.text.vehicles
+				text = langOptions.categorize.text.vehicles
 			}
 		end
 		frame.x = initX 

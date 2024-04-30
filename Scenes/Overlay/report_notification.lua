@@ -51,15 +51,15 @@ function scene:create( event )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
 
-	local notificationText = display.newText( mainGroup, "Report successfully created!", display.contentCenterX, 90, "Fonts/FORTE.TTF", 35 )
+	local notificationText = display.newText( mainGroup, langOptions.report_notification.text.head, display.contentCenterX, 90, "Fonts/FORTE.TTF", 35 )
 	notificationText.font = native.newFont( "Fonts.FORTE", 16 )
 	notificationText:setTextColor( 1 )	
 
-	local confirmText = display.newText( mainGroup, "Confirm", display.contentCenterX, display.contentCenterY, "Fonts/FORTE.TTF", 35 )
+	local confirmText = display.newText( mainGroup, langOptions.report_notification.text.confirm, display.contentCenterX, display.contentCenterY, "Fonts/FORTE.TTF", 35 )
 	confirmText.font = native.newFont( "Fonts.FORTE", 16 )
 	confirmText:setTextColor( 1 )	
 
-	local sendData = display.newText( mainGroup, "Send", display.contentCenterX, display.contentCenterY + 35, "Fonts/FORTE.TTF", 35 )
+	local sendData = display.newText( mainGroup, langOptions.report_notification.text.send, display.contentCenterX, display.contentCenterY + 35, "Fonts/FORTE.TTF", 35 )
 	sendData.font = native.newFont( "Fonts.FORTE", 16 )
 	sendData:setTextColor( 1 )	
 

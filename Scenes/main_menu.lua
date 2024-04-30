@@ -18,12 +18,12 @@ local chalkButton = nil
 -----------------------------------------
 --canva settings
 -----------------------------------------
-local firstHalfCenterX = display.contentCenterX / 2
-local secondHalfCenterX = display.contentCenterX + (firstHalfCenterX)
+firstHalfCenterX = display.contentCenterX / 2
+secondHalfCenterX = display.contentCenterX + (firstHalfCenterX)
 
-local firstHalfCenterY = display.contentCenterY / 2
-local secondHalfCenterY = display.contentCenterY + (firstHalfCenterY)
-local referenceSize = nil
+firstHalfCenterY = display.contentCenterY / 2
+secondHalfCenterY = display.contentCenterY + (firstHalfCenterY)
+referenceSize = nil
 if( display.contentHeight > display.contentWidth )then referenceSize = display.contentHeight
 else referenceSize = display.contentWidth end
 ------------------------------------------
@@ -393,11 +393,11 @@ vehiclesSheet = graphics.newImageSheet( "Assets/Vehicles/vehicles-sheet.png", vS
 -- Sheets
 -----------------------------------------
 -----------------------------------------
--- Categorize Lang handling
+-- Lang handling
 -----------------------------------------
-langOptionsCategorize = {}
+langOptions = {}
 if(lang=="ES")then
-	langOptionsCategorize = {
+	langOptions.categorize = {
 		text = {
 			animals = "Animales",
 			plants = "Plantas",
@@ -413,8 +413,47 @@ if(lang=="ES")then
 			vehicles = "Audio/voice/ES/vehiculos.mp3" 
 		}
 	}
+	langOptions.categorize_win_1 = {
+		text = {
+			head = "Nivel 1 completado!"
+		},
+		audio = {
+			voice = "Audio/voice/ES/nivel_1.mp3"
+		}
+	}
+	langOptions.categorize_win_2 = {
+		text = {
+			head = "Nivel 2 completado!"
+		},
+		audio = {
+			voice = "Audio/voice/ES/nivel_2.mp3"
+		}
+	}
+	langOptions.categorize_win_3 = {
+		audio = {
+			chance1 = "Audio/voice/ES/ganar_2.mp3",
+			chance2 = "Audio/voice/ES/ganar_2.mp3"
+		}
+	}
+	langOptions.pauseMenu = {
+		text = {
+			head = "Seguro que deseas salir?",
+			yes = "Si",
+			no = "No"
+		},
+		audio = {
+			confirm = "Audio/voice/ES/salir.mp3"
+		}
+	}
+	langOptions.report_notification = {
+		text = {
+			head = "Reporte creado con exito!",
+			confirm = "Confirmar",
+			send = "Enviar"
+		}
+	}
 elseif(lang=="EN")then
-	langOptionsCategorize = {
+	langOptions.categorize = {
 		text = {
 			animals = "Animals",
 			plants = "Plants",
@@ -428,6 +467,45 @@ elseif(lang=="EN")then
 			food = "Audio/voice/insert_food.wav",
 			clothes = "Audio/voice/put_clothes.wav",
 			vehicles = "Audio/voice/which_are_vehicles.wav"
+		}
+	}
+	langOptions.categorize_win_1 = {
+		text = {
+			head = "Level 1 completed!"
+		},
+		audio = {
+			voice = "Audio/voice/level_1_finish.wav"
+		}
+	}
+	langOptions.categorize_win_2 = {
+		text = {
+			head = "Level 2 completed!"
+		},
+		audio = {
+			voice = "Audio/voice/level_2_finish.wav"
+		}
+	}
+	langOptions.categorize_win_3 = {
+		audio = {
+			chance1 = "Audio/voice/win_1.wav",
+			chance2 = "Audio/voice/win_2.wav"
+		}
+	}
+	langOptions.pauseMenu = {
+		text = {
+			head = "Are you sure you\nwanna exit?",
+			yes = "Yes",
+			no = "No"
+		},
+		audio = {
+			confirm = "Audio/voice/exit.wav"
+		}
+	}
+	langOptions.report_notification = {
+		text = {
+			head = "Report successfully created!",
+			confirm = "Confirm",
+			send = "Send"
 		}
 	}
 end
@@ -462,15 +540,15 @@ end
 --listen name of the category 
 function instructions()
 	if( selectedBasket.name == "foodBasket" )then
-		return langOptionsCategorize.audio.food
+		return langOptions.categorize.audio.food
 	elseif( selectedBasket.name == "animalBasket" )then
-		return langOptionsCategorize.audio.animals
+		return langOptions.categorize.audio.animals
 	elseif( selectedBasket.name == "vehiclesBasket" )then
-		return langOptionsCategorize.audio.vehicles
+		return langOptions.categorize.audio.vehicles
 	elseif( selectedBasket.name == "clothesBasket" )then
-		return langOptionsCategorize.audio.clothes
+		return langOptions.categorize.audio.clothes
 	elseif( selectedBasket.name == "plantsBasket" )then
-		return langOptionsCategorize.audio.plants
+		return langOptions.categorize.audio.plants
 	end
 end
 -----------------------------------------

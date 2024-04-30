@@ -32,17 +32,28 @@ function scene:create( event )
 	background.x = display.contentCenterX
 	background.y = display.contentCenterY
 
-	local pauseText = display.newImageRect( uiGroup, "Assets/Background/pause-font.png", 325, 100 ) --pause question
-	pauseText.x = display.contentCenterX
-	pauseText.y = 100
+	local pauseTextOptions = 
+	{
+		parent = uiGroup,
+	    text = langOptions.pauseMenu.text.head,     
+	    x = display.contentCenterX,
+	    y = 100,
+	    font = "Fonts/FORTE.TTF",   
+	    fontSize = 35,
+	    align = "center" 
+	}
+	local pauseText = display.newText( pauseTextOptions )
+	pauseText.font = native.newFont( "Fonts.FORTE", 16 )
+	pauseText.align = "center"
+	pauseText:setTextColor( 1 )
 
-	local option1 = display.newImageRect( uiGroup, "Assets/Background/pause-option-1.png", 50, 29 ) --yes
-	option1.x = display.contentCenterX
-	option1.y = 190
+	local option1 = display.newText( uiGroup, langOptions.pauseMenu.text.yes, display.contentCenterX, 190, "Fonts/FORTE.TTF", 35 )
+	option1.font = native.newFont( "Fonts.FORTE", 16 )
+	option1:setTextColor( 1 )
 
-	local option2 = display.newImageRect( uiGroup, "Assets/Background/pause-option-2.png", 50, 29 ) --no
-	option2.x = display.contentCenterX
-	option2.y = 240
+	local option2 = display.newText( uiGroup, langOptions.pauseMenu.text.no, display.contentCenterX, 240, "Fonts/FORTE.TTF", 35 )
+	option2.font = native.newFont( "Fonts.FORTE", 16 )
+	option2:setTextColor( 1 )
 
 	option1:addEventListener( "tap", gotoMenu )
 	option2:addEventListener( "tap", onResume )
@@ -53,7 +64,7 @@ function scene:show( event )
 
 	if( phase == "will" )then
 	elseif( phase == "did" )then
-		activeVoice("Audio/voice/exit.wav")
+		activeVoice(langOptions.pauseMenu.audio.confirm)
 	end
 end
 function scene:hide( event )
