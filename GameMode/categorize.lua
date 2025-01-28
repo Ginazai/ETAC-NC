@@ -149,7 +149,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
 		--reset the initial target position
 		if(target == startingTarget)then
 			eventTimeEnd = event.time - eventTimeStart
-    		--local miliseconds = math.floor( eventTimeEnd/100 ) 
+    		--local miliseconds = math.floor( eventTimeEnd/100 )
     		--print( "ms: " .. miliseconds )
     		local totalSeconds = eventTimeEnd/60000
     		--print( "mod: " .. totalSeconds ) 
@@ -161,8 +161,8 @@ local function dragItem( event ) --drag: touch detector + collision detector
     		--print( "sec: " .. seconds )
     		local minutes = math.floor( eventTimeEnd/60000 )
     		--print( "min: " .. minutes )
-    		eventTimeEnd = string.format( "%02d:%02d", minutes, seconds ) --time format
-    		print( eventTimeEnd )
+    		eventTimeEnd = string.format( "%02d:%02d:%02d", 00, minutes, seconds ) --time format
+    		--print( "time grab: " .. eventTimeEnd )
     		globalObject = target.name
     		if(attempted)then
     			globalTarget = selectedBasket["name"]
@@ -173,7 +173,7 @@ local function dragItem( event ) --drag: touch detector + collision detector
     		local timeWithin = timeSpend - lastTimeGrab
     		local timeWithinMin = timeWithin / 60
     		local timeWithinSec = timeWithin % 60
-    		local realTimeWithin = string.format( "%02d:%02d", timeWithinMin, timeWithinSec )
+    		local realTimeWithin = string.format( "%02d:%02d:%02d", 00, timeWithinMin, timeWithinSec )
     		print( realTimeWithin )
     		lastTimeGrab = timeSpend
 			local insertActivity = [[ INSERT INTO activity VALUES( NULL, "]]..globalObject..[[", 

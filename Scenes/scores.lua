@@ -44,31 +44,36 @@ elseif(lang=="EN")then
 end
 --Create data report
 local function createReport()
-	local path = system.pathForFile( "data_report.csv", system.DocumentsDirectory )
-	local file = io.open( path, "w" )
+	local path_overall = system.pathForFile( "overall_data.csv", system.DocumentsDirectory )
+	local file_overall = io.open( path_overall, "w" )
 	local i = 1 
-	if( file ~= nil )then
+	if( file_overall ~= nil )then
 		playMagic = audio.play( magicSound )
 		for data in db:nrows("SELECT * FROM scores") do
 			if( i == 1 )then
-				file:write( "Date,Total time spend,Total score \n" )
+				file_overall:write( "Date,Total time spend,Total score \n" )
 			end
-			file:write( data._date .. "," 
+			file_overall:write( data._date .. "," 
 			.. data.time_spend .. "," .. data.score .. "\n")
 			i = i + 1
 		end
-		i = 1
+		io.close( file_overall )
+	end
+	local path_detailed = system.pathForFile( "detailed_data.csv", system.DocumentsDirectory )
+	local file_detailed = io.open( path_detailed, "w" )		
+	i = 1 
+	if( file_detailed ~= nil )then	
 		for dt in db:nrows("SELECT * FROM activity") do
 			if( i == 1 )then
-				file:write( "\nDate,Time within grab (mm:ss),Time grabbing (mm:ss),Object,Target \n" )
+				file_detailed:write( "Date,Time between grabbing two objects (m:s:ms),Time grabbing single object (hh:mm:ss),Object,Target \n" )
 			end
-			file:write( dt._date .. "," .. dt._time_within .. "," .. dt._time .. "," 
+			file_detailed:write( dt._date .. "," .. dt._time_within .. "," .. dt._time .. "," 
 			.. dt._object .. "," .. dt._target .. "\n")
 			i = i + 1
 		end		
-		io.close( file )
-		composer.showOverlay( "Scenes.Overlay.report_notification" )
+		io.close( file_detailed )
 	end
+	composer.showOverlay( "Scenes.Overlay.report_notification" )
 end
 --Create table view for scores
 local function onRowRender( event )
