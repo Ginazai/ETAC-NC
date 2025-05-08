@@ -1,4 +1,5 @@
-<h1>Tap&Top</h1>
+<h1>ETAC-NC: Estimulation Tool for Autistic Children with No Comorbidity</h1>
+<h6>Tap&Top</h6>
 <p>
 This game is intended both as a regular games for kids and also as a way to track the hability to
 categorize of kids with certain conditions. In the current stage, the game is still lacking a lot
